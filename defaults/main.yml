@@ -1,0 +1,41 @@
+---
+# defaults file for nutanix_role_prism_central_deploy
+nutanix_host: ""
+nutanix_username: ""
+nutanix_password: ""
+nutanix_port: 9440
+validate_certs: no
+nutanix_debug: False
+nutanix_pc_deploy_default_password: Nutanix/4u
+# nutanix_pc_deploy_new_password:
+nutanix_pc_deploy_pulse: True
+nutanix_pc_deploy_eula_accept: False
+# nutanix_pc_deploy_eula_full_name:
+# nutanix_pc_deploy_eula_company_name:
+# nutanix_pc_deploy_eula_job_title:
+nutanix_pc_deploy_auto_register: False
+nutanix_pc_deploy_vm_name: prism-central
+nutanix_pc_deploy_size: small
+nutanix_pc_deploy_retries: 24
+nutanix_pc_deploy_delay: 150
+# nutanix_pc_deploy_container_name:
+# nutanix_pc_deploy_version:
+# nutanix_pc_deploy_subnet_name:
+# nutanix_pc_deploy_network_address:
+# nutanix_pc_deploy_gateway:
+# nutanix_pc_deploy_ip_address:
+# nutanix_pc_deploy_dns_list:
+
+nutanix_central_size_defaults:
+  - size: small
+    nutanix_pc_deploy_num_sockets: 6
+    nutanix_pc_deploy_data_disk_size: 500 GB
+    nutanix_pc_deploy_memory_size: 26 GB
+  - size: large
+    nutanix_pc_deploy_num_sockets: 10
+    nutanix_pc_deploy_data_disk_size: 2500 GB
+    nutanix_pc_deploy_memory_size: 44 GB
+  - size: x-large
+    nutanix_pc_deploy_num_sockets: 14
+    nutanix_pc_deploy_data_disk_size: 2500 GB
+    nutanix_pc_deploy_memory_size: 60 GB

@@ -1,0 +1,47 @@
+---
+# tasks file for nutanix_role_prism_central_deploy
+- import_tasks: setup_api.yml
+
+- name: "Task can only be run against Prism Element"
+  ansible.builtin.fail:
+    msg: "'nutanix_host' needs to be set to the VIP of a Nutanix cluster. Please check the variable and try again."
+  when:
+    - nutanix_endpoint_prism_type != 'pe'
+
+- import_tasks: check_variables.yml
+
+- import_tasks: build_pc_config.yml
+
+- import_tasks: deploy_pc.yml
+
+- name: Set Prism Central 'admin' password
+  ansible.builtin.import_role:
+    name: grdavies.role_nutanix_prism_initial_password
+  vars:
+    nutanix_prism_pwd_host: "{{ nutanix_pc_deploy_ip_address }}"
+    nutanix_debug: False
+    nutanix_prism_pwd_username: admin
+    nutanix_prism_initial_password: "{{ nutanix_pc_deploy_default_password }}"
+    nutanix_prism_new_password: "{{ nutanix_pc_deploy_new_password }}"
+  when: nutanix_pc_deploy_new_password is defined
+
+- name: Accept Prism EULA
+  ansible.builtin.import_role:
+    name: grdavies.role_nutanix_prism_eula
+  vars:
+    nutanix_prism_eula_host: "{{ nutanix_pc_deploy_ip_address }}"
+    nutanix_prism_eula_username: admin
+    nutanix_prism_eula_password: "{{ nutanix_pc_deploy_new_password }}"
+    nutanix_prism_eula_eula_accept: "{{ nutanix_pc_deploy_eula_accept }}"
+    nutanix_prism_eula_full_name: "{{ nutanix_pc_deploy_eula_full_name }}"
+    nutanix_prism_eula_company_name: "{{ nutanix_pc_deploy_eula_company_name }}"
+    nutanix_prism_eula_job_title: "{{ nutanix_pc_deploy_eula_job_title }}"
+
+- name: Enable Pulse
+  ansible.builtin.import_role:
+    name: grdavies.role_nutanix_prism_pulse
+  vars:
+    nutanix_pulse_host: "{{ nutanix_pc_deploy_ip_address }}"
+    nutanix_pulse_username: admin
+    nutanix_pulse_password: "{{ nutanix_pc_deploy_new_password }}"
+    nutanix_pulse_status: "{{ nutanix_pc_deploy_pulse }}"

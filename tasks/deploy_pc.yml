@@ -1,0 +1,57 @@
+---
+- name: Deploying Prism Central to Cluster
+  ansible.builtin.uri:
+    url: "https://{{ nutanix_host }}:{{ nutanix_port }}/api/nutanix/v3/prism_central"
+    method: POST
+    validate_certs: "{{ validate_certs }}"
+    body_format: json
+    body: "{{ lookup('template','pc-req.j2') | from_yaml | to_json }}"
+    headers:
+      Authorization: "{{ nutanix_api_auth }}"
+    status_code: 202
+    return_content: yes
+  register: nutanix_deploy_pc
+  ignore_errors: False
+
+- name: Wait for Prism Central deploy task to complete
+  ansible.builtin.import_role:
+    name: grdavies.role_nutanix_prism_monitor_task
+  vars:
+    nutanix_task_uuid: "{{ nutanix_deploy_pc.json.task_uuid }}"
+    nutanix_task_retries: "{{ nutanix_pc_deploy_retries }}"
+    nutanix_task_retry_delay: "{{ nutanix_pc_deploy_delay }}"
+
+- name: Set nutanix_pc_deploy_task
+  set_fact:
+    nutanix_pc_deploy_task: "{{ monitored_task }}"
+
+- name: Generate basic authorization string
+  set_fact:
+    nutanix_pc_auth_string: "admin:{{ nutanix_pc_deploy_default_password }}"
+  no_log: True
+
+- name: Generate authorization header
+  set_fact:
+    nutanix_pc_api_auth: "Basic {{ nutanix_pc_auth_string | b64encode(encoding='ascii') }}"
+  no_log: True
+  when: nutanix_pc_auth_string is defined
+
+- name: Unset basic authorization string
+  set_fact:
+    nutanix_pc_auth_string: ""
+  no_log: True
+  when: nutanix_pc_auth_string is defined
+
+- name: Wait for Prrism Central API to become available
+  ansible.builtin.uri:
+    url: "https://{{ nutanix_pc_deploy_ip_address }}:{{ nutanix_port }}/api/nutanix/v3/users/me"
+    method: GET
+    validate_certs: "{{ validate_certs }}"
+    body_format: json
+    headers:
+      Authorization: "{{ nutanix_pc_api_auth }}"
+  ignore_errors: True
+  register: nutanix_pc_api_test
+  until: "nutanix_pc_api_test.status == 200"
+  retries: 30
+  delay: 10

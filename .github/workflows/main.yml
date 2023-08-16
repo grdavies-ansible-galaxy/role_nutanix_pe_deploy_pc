@@ -1,0 +1,29 @@
+name: Ansible Galaxy
+
+on:
+  push:
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+'
+  workflow_dispatch:
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: run ansible-lint
+        uses: ansible/ansible-lint@main
+        with:
+          path: "."
+
+  release:
+    needs:
+      - lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+
+      - name: galaxy
+        uses: buluma/galaxy-action@v1.0.3
+        with:
+          galaxy_api_key: ${{ secrets.galaxy_api_key }}
