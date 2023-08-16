@@ -1,0 +1,3 @@
+tasks/build_pc_config.yml var-naming[no-role-prefix]
+tasks/deploy_pc.yml var-naming[no-role-prefix]
+tasks/main.yml var-naming[no-role-prefix]

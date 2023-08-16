@@ -1,6 +1,7 @@
 ---
 # tasks file for nutanix_role_prism_central_deploy
-- import_tasks: setup_api.yml
+- name: Setup connection to Nutanix API
+  ansible.builtin.include_tasks: setup_api.yml
 
 - name: "Task can only be run against Prism Element"
   ansible.builtin.fail:
@@ -8,18 +9,21 @@
   when:
     - nutanix_endpoint_prism_type != 'pe'
 
-- import_tasks: check_variables.yml
+- name: Check variables
+  ansible.builtin.import_tasks: check_variables.yml
 
-- import_tasks: build_pc_config.yml
+- name: Build PC config
+  ansible.builtin.import_tasks: build_pc_config.yml
 
-- import_tasks: deploy_pc.yml
+- namme: Deploy PC
+  ansible.builtin.import_tasks: deploy_pc.yml
 
 - name: Set Prism Central 'admin' password
   ansible.builtin.import_role:
     name: grdavies.role_nutanix_prism_initial_password
   vars:
     nutanix_prism_pwd_host: "{{ nutanix_pc_deploy_ip_address }}"
-    nutanix_debug: False
+    nutanix_debug: false
     nutanix_prism_pwd_username: admin
     nutanix_prism_initial_password: "{{ nutanix_pc_deploy_default_password }}"
     nutanix_prism_new_password: "{{ nutanix_pc_deploy_new_password }}"

@@ -21,9 +21,9 @@
     - nutanix_password != ""
 
 - name: Generate basic authorization string
-  set_fact:
+  ansible.builtin.set_fact:
     nutanix_auth_string: "{{ nutanix_username }}:{{ nutanix_password }}"
-  no_log: True
+  no_log: true
   when:
     - nutanix_username is defined
     - nutanix_username != ""
@@ -31,19 +31,19 @@
     - nutanix_password != ""
 
 - name: Generate authorization header
-  set_fact:
+  ansible.builtin.set_fact:
     nutanix_api_auth: "Basic {{ nutanix_auth_string | b64encode(encoding='ascii') }}"
-  no_log: True
+  no_log: true
   when: nutanix_auth_string is defined
 
 - name: Unset basic authorization string
-  set_fact:
+  ansible.builtin.set_fact:
     nutanix_auth_string: ""
-  no_log: True
+  no_log: true
   when: nutanix_auth_string is defined
 
 - name: Test logon to API
-  uri:
+  ansible.builtin.uri:
     url: "https://{{ nutanix_host }}:{{ nutanix_port }}/api/nutanix/v3/users/me"
     method: GET
     validate_certs: "{{ validate_certs }}"
@@ -51,10 +51,10 @@
     headers:
       Authorization: "{{ nutanix_api_auth }}"
     status_code: 200
-    return_content: yes
+    return_content: true
   register: nutanix_api_login
-  ignore_errors: no
+  ignore_errors: false
 
 - name: Set Prism endpoint type
-  set_fact:
+  ansible.builtin.set_fact:
     nutanix_endpoint_prism_type: "{{ nutanix_api_login.x_ntnx_env }}"
