@@ -1,4 +1,6 @@
 galaxy_info:
+  role_name: role_nutanix_pe_deploy_pc
+  namespace: grdavies
   author: Ross Davies
   description: Role to deploy Prism Central on a Nutanix cluster
   company: N/A
@@ -16,7 +18,7 @@ galaxy_info:
   # - CC-BY-4.0
   license: MIT
 
-  min_ansible_version: 2.1
+  min_ansible_version: "2.1"
 
   # If this a Container Enabled role, provide the minimum Ansible Container version.
   # min_ansible_container_version:
