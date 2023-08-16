@@ -1,3 +1,4 @@
 ---
+# ansible-galaxy install -r requirements.yml
 collections:
-  - nutanix.ncp
+  - name: nutanix.ncp
