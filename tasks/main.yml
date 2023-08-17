@@ -15,7 +15,7 @@
 - name: Build PC config
   ansible.builtin.import_tasks: build_pc_config.yml
 
-- namme: Deploy PC
+- name: Deploy PC
   ansible.builtin.import_tasks: deploy_pc.yml
 
 - name: Set Prism Central 'admin' password
