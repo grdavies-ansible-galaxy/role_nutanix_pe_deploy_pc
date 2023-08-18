@@ -33,7 +33,10 @@
     nutanix_prism_pwd_username: admin
     nutanix_prism_initial_password: "{{ nutanix_pc_deploy_default_password }}"
     nutanix_prism_new_password: "{{ nutanix_pc_deploy_new_password }}"
-  when: nutanix_pc_deploy_new_password is defined
+  when:
+    - nutanix_pc_deploy_new_password is defined
+    - not nutanix_pc_vm_exists | default(false)
+    - not nutanix_pc_already_registered | default(false)
 
 - name: Accept Prism EULA
   ansible.builtin.import_role:
