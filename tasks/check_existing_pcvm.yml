@@ -5,12 +5,12 @@
     nutanix_host: "{{ nutanix_host }}"
     nutanix_username: admin
     nutanix_password: "{{ nutanix_password }}"
-    validate_certs: no
+    validate_certs: "{{ validate_certs }}"
     filter:
       vm_name: "{{ inventory_hostname_short }}"
     kind: vm
   register: nutanix_pc_vm_check
-  ignore_errors: True
+  ignore_errors: true
 
 - name: Too many VMs found
   ansible.builtin.fail:
@@ -24,7 +24,7 @@
   when: nutanix_pc_vm_check.response.metadata.length == 0
 
 - name: Get Prism Element registration state
-  uri:
+  ansible.builtin.uri:
     url: "https://{{ nutanix_host }}:{{ nutanix_port }}/PrismGateway/services/rest/v1/multicluster/cluster_external_state"
     method: GET
     validate_certs: "{{ validate_certs }}"
