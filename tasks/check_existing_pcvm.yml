@@ -1,0 +1,40 @@
+---
+- name: Check if prism central vm exists
+  delegate_to: 127.0.0.1
+  nutanix.ncp.ntnx_vms_info:
+    nutanix_host: "{{ nutanix_host }}"
+    nutanix_username: admin
+    nutanix_password: "{{ nutanix_password }}"
+    validate_certs: no
+    filter:
+      vm_name: "{{ inventory_hostname_short }}"
+    kind: vm
+  register: nutanix_pc_vm_check
+  ignore_errors: True
+
+- name: Too many VMs found
+  ansible.builtin.fail:
+    msg: "Too many VM name matches found. Investigate cluster and retry playbook."
+  when:
+    - nutanix_pc_vm_check.response.metadata.length > 1
+
+- name: Set nutanix_pc_vm_exists
+  ansible.builtin.set_fact:
+    nutanix_pc_vm_exists: true
+  when: nutanix_pc_vm_check.response.metadata.length == 0
+
+- name: Get Prism Element registration state
+  uri:
+    url: "https://{{ nutanix_host }}:{{ nutanix_port }}/PrismGateway/services/rest/v1/multicluster/cluster_external_state"
+    method: GET
+    validate_certs: "{{ validate_certs }}"
+    headers:
+      Authorization: "{{ nutanix_api_auth }}"
+    status_code: 200
+  register: nutanix_pc_register_current_state
+  no_log: true
+
+- name: Set nutanix_pc_already_registered
+  ansible.builtin.set_fact:
+    nutanix_pc_already_registered: true
+  when: nutanix_pc_register_current_state.json | length == 0

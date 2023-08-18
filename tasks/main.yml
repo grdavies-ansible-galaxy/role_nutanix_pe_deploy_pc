@@ -15,8 +15,14 @@
 - name: Build PC config
   ansible.builtin.import_tasks: build_pc_config.yml
 
+- name: Check for Pre-Existing PC VM
+  ansible.builtin.import_tasks: check_existing_pcvm.yml
+
 - name: Deploy PC
   ansible.builtin.import_tasks: deploy_pc.yml
+  when:
+    - not nutanix_pc_vm_exists | default(false)
+    - not nutanix_pc_already_registered | default(false)
 
 - name: Set Prism Central 'admin' password
   ansible.builtin.import_role:
