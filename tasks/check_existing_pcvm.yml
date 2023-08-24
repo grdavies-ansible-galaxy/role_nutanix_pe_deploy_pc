@@ -49,7 +49,7 @@
 - name: Set nutanix_pc_already_registered
   ansible.builtin.set_fact:
     nutanix_pc_already_registered: true
-  when: nutanix_pc_register_current_state.json | length == 1
+  when: nutanix_pc_register_current_state.json | length != 0
 
 - name: Debug nutanix_pc_already_registered
   ansible.builtin.debug:
