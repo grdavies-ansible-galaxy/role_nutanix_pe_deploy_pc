@@ -25,6 +25,8 @@ nutanix_pc_deploy_delay: 150
 # nutanix_pc_deploy_gateway:
 # nutanix_pc_deploy_ip_address:
 # nutanix_pc_deploy_dns_list:
+nutanix_pc_vm_exists: false
+nutanix_pc_already_registered: false
 
 nutanix_central_size_defaults:
   - size: small

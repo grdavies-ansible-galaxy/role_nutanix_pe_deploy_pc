@@ -12,6 +12,10 @@
   register: nutanix_pc_vm_check
   ignore_errors: true
 
+- name: Debug nutanix_pc_vm_check
+  ansible.builtin.debug:
+    var: nutanix_pc_vm_check
+
 - name: Too many VMs found
   ansible.builtin.fail:
     msg: "Too many VM name matches found. Investigate cluster and retry playbook."
@@ -21,7 +25,11 @@
 - name: Set nutanix_pc_vm_exists
   ansible.builtin.set_fact:
     nutanix_pc_vm_exists: true
-  when: nutanix_pc_vm_check.response.metadata.length == 0
+  when: nutanix_pc_vm_check.response.metadata.length == 1
+
+- name: Debug nutanix_pc_vm_exists
+  ansible.builtin.debug:
+    var: nutanix_pc_vm_exists
 
 - name: Get Prism Element registration state
   ansible.builtin.uri:
@@ -34,7 +42,15 @@
   register: nutanix_pc_register_current_state
   no_log: true
 
+- name: Debug nutanix_pc_register_current_state
+  ansible.builtin.debug:
+    var: nutanix_pc_register_current_state
+
 - name: Set nutanix_pc_already_registered
   ansible.builtin.set_fact:
     nutanix_pc_already_registered: true
-  when: nutanix_pc_register_current_state.json | length == 0
+  when: nutanix_pc_register_current_state.json | length == 1
+
+- name: Debug nutanix_pc_already_registered
+  ansible.builtin.debug:
+    var: nutanix_pc_already_registered
