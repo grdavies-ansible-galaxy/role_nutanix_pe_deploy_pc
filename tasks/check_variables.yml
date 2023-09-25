@@ -23,11 +23,11 @@
   when:
     - nutanix_pc_deploy_gateway is not defined
 
-- name: Variable 'nutanix_pc_deploy_ip_address' not defined
-  ansible.builtin.fail:
-    msg: "the variable 'nutanix_pc_deploy_ip_address' is not defined."
-  when:
-    - nutanix_pc_deploy_ip_address is not defined
+# - name: Variable 'nutanix_pc_deploy_ip_address' not defined
+#   ansible.builtin.fail:
+#     msg: "the variable 'nutanix_pc_deploy_ip_address' is not defined."
+#   when:
+#     - nutanix_pc_deploy_ip_address is not defined
 
 - name: Variable 'nutanix_pc_deploy_dns_list' not defined
   ansible.builtin.fail:
@@ -35,3 +35,15 @@
   when:
     - nutanix_pc_deploy_dns_list is not defined
     - nutanix_pc_deploy_dns_list | length > 0
+
+- name: Variable 'nutanix_pc_deploy_size' not defined
+  ansible.builtin.fail:
+    msg: "the variable 'nutanix_pc_deploy_size' is not defined."
+  when:
+    - nutanix_pc_deploy_size is not defined
+
+- name: Variable 'nutanix_pc_deploy_size' incorrect value
+  ansible.builtin.fail:
+    msg: "the variable 'nutanix_pc_deploy_size' is not set to ['small', 'large', 'xlarge']."
+  when:
+    - nutanix_pc_deploy_size not in ['small', 'large', 'xlarge']

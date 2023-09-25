@@ -1,4 +1,9 @@
 ---
+- name: Debug deployment HTTP POST body
+  ansible.builtin.debug:
+    msg: "{{ lookup('template', 'pc-req.j2') | from_yaml | to_nice_json }}"
+  when: nutanix_debug
+
 - name: Deploying Prism Central to Cluster
   ansible.builtin.uri:
     url: "https://{{ nutanix_host }}:{{ nutanix_port }}/api/nutanix/v3/prism_central"

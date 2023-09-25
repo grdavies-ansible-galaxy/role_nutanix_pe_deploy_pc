@@ -2,34 +2,43 @@
 - name: Check if prism central vm exists
   delegate_to: 127.0.0.1
   nutanix.ncp.ntnx_vms_info:
-    nutanix_host: "{{ nutanix_host }}"
+    nutanix_host: "10.38.26.37"
     nutanix_username: admin
-    nutanix_password: "{{ nutanix_password }}"
-    validate_certs: "{{ validate_certs }}"
+    nutanix_password: "nx2Tech407!"
+    validate_certs: false
     filter:
-      vm_name: "{{ inventory_hostname_short }}"
+      vm_name: "{{ item.name }}"
     kind: vm
   register: nutanix_pc_vm_check
   ignore_errors: true
+  loop: "{{ nutanix_pc_deploy_vm_list }}"
 
 - name: Debug nutanix_pc_vm_check
   ansible.builtin.debug:
-    var: nutanix_pc_vm_check
+    msg: "{{ nutanix_pc_vm_check }}"
+  when: nutanix_debug
 
 - name: Too many VMs found
   ansible.builtin.fail:
-    msg: "Too many VM name matches found. Investigate cluster and retry playbook."
+    msg: "Too many VM name matches found for '{{ item.item.name }}'. Investigate cluster and retry playbook."
+  loop: "{{ nutanix_pc_vm_check.results }}"
+  loop_control:
+    label: "{{ item.item }}"
   when:
-    - nutanix_pc_vm_check.response.metadata.length > 1
+    - item.response.metadata.length > 1
 
 - name: Set nutanix_pc_vm_exists
   ansible.builtin.set_fact:
     nutanix_pc_vm_exists: true
-  when: nutanix_pc_vm_check.response.metadata.length == 1
+  loop: "{{ nutanix_pc_vm_check.results }}"
+  loop_control:
+    label: "{{ item.item }}"
+  when: item.response.metadata.length == 1
 
 - name: Debug nutanix_pc_vm_exists
   ansible.builtin.debug:
-    var: nutanix_pc_vm_exists
+    msg: "{{ nutanix_pc_vm_exists | default(false) }}"
+  when: nutanix_debug
 
 - name: Get Prism Element registration state
   ansible.builtin.uri:
@@ -42,9 +51,10 @@
   register: nutanix_pc_register_current_state
   no_log: true
 
-- name: Debug nutanix_pc_register_current_state
+- name: Debug nutanix_pc_register_current_state.json
   ansible.builtin.debug:
-    var: nutanix_pc_register_current_state
+    var: nutanix_pc_register_current_state.json
+  when: nutanix_debug
 
 - name: Set nutanix_pc_already_registered
   ansible.builtin.set_fact:
@@ -54,3 +64,4 @@
 - name: Debug nutanix_pc_already_registered
   ansible.builtin.debug:
     var: nutanix_pc_already_registered
+  when: nutanix_debug

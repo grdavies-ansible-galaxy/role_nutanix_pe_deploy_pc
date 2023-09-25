@@ -4,20 +4,28 @@
   roles:
     - role: ../..
   vars:
-    nutanix_host: "10.38.41.37"
+    nutanix_host: 10.38.26.37
     nutanix_username: admin
-    nutanix_password: nx2Tech030!
-    # nutanix_debug: True
+    nutanix_password: nx2Tech407!
+    nutanix_debug: true
+    # nutanix_pc_deploy_version: pc.2023.3
     nutanix_pc_deploy_container_name: Default
     nutanix_pc_deploy_subnet_name: Primary
-    nutanix_pc_deploy_network_address: 10.38.41.0/25
-    nutanix_pc_deploy_gateway: 10.38.41.1
-    nutanix_pc_deploy_ip_address: 10.38.41.39
+    nutanix_pc_deploy_network_address: 10.38.26.0/25
+    nutanix_pc_deploy_gateway: 10.38.26.1
     nutanix_pc_deploy_dns_list:
-      - 10.38.41.39
-    nutanix_pc_deploy_new_password: nx2Tech030!
-    nutanix_pc_deploy_eula_accept: True
+      - 10.42.194.10
+    nutanix_pc_deploy_new_password: nx2Tech407!
+    nutanix_pc_deploy_eula_accept: true
     nutanix_pc_deploy_eula_full_name: Ross Davies
     nutanix_pc_deploy_eula_company_name: Nutanix
     nutanix_pc_deploy_eula_job_title: SE
-    nutanix_pc_deploy_size: x-large
+    nutanix_pc_deploy_size: xlarge
+    nutanix_pc_vip: 10.38.26.40
+    nutanix_pc_deploy_vm_list:
+      - name: pcvm1
+        ip_address: 10.38.26.41
+      - name: pcvm2
+        ip_address: 10.38.26.42
+      - name: pcvm3
+        ip_address: 10.38.26.43

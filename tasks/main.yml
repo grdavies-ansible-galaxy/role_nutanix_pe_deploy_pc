@@ -28,7 +28,7 @@
   ansible.builtin.import_role:
     name: grdavies.role_nutanix_prism_initial_password
   vars:
-    nutanix_prism_pwd_host: "{{ nutanix_pc_deploy_ip_address }}"
+    nutanix_prism_pwd_host: "{{ nutanix_pc_vip | default(nutanix_pc_deploy_vm_list[0].ip_address) }}"
     nutanix_debug: false
     nutanix_prism_pwd_username: admin
     nutanix_prism_initial_password: "{{ nutanix_pc_deploy_default_password }}"
@@ -42,7 +42,7 @@
   ansible.builtin.import_role:
     name: grdavies.role_nutanix_prism_eula
   vars:
-    nutanix_prism_eula_host: "{{ nutanix_pc_deploy_ip_address }}"
+    nutanix_prism_eula_host: "{{ nutanix_pc_vip | default(nutanix_pc_deploy_vm_list[0].ip_address) }}"
     nutanix_prism_eula_username: admin
     nutanix_prism_eula_password: "{{ nutanix_pc_deploy_new_password }}"
     nutanix_prism_eula_eula_accept: "{{ nutanix_pc_deploy_eula_accept }}"
@@ -54,7 +54,7 @@
   ansible.builtin.import_role:
     name: grdavies.role_nutanix_prism_pulse
   vars:
-    nutanix_pulse_host: "{{ nutanix_pc_deploy_ip_address }}"
+    nutanix_pulse_host: "{{ nutanix_pc_vip | default(nutanix_pc_deploy_vm_list[0].ip_address) }}"
     nutanix_pulse_username: admin
     nutanix_pulse_password: "{{ nutanix_pc_deploy_new_password }}"
     nutanix_pulse_status: "{{ nutanix_pc_deploy_pulse }}"

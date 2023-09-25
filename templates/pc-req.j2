@@ -1,18 +1,23 @@
 ---
 resources:
-   version: {{ nutanix_pc_deploy_version }}
-   should_auto_register: {{ nutanix_pc_deploy_auto_register }}
-   pc_vm_list:
-   - vm_name: {{ nutanix_pc_deploy_vm_name }}
-     container_uuid:  {{ nutanix_container_found_uuid }}
-     num_sockets: {{ nutanix_pc_deploy_num_sockets }}
-     data_disk_size_bytes: {{ nutanix_pc_deploy_data_disk_size | human_to_bytes }}
-     memory_size_bytes: {{ nutanix_pc_deploy_memory_size | human_to_bytes }}
-     dns_server_ip_list: {{ nutanix_pc_deploy_dns_list }}
-     nic_list:
-     - ip_list:
-       - {{ nutanix_pc_deploy_ip_address }}
-       network_configuration:
-         network_uuid: {{ nutanix_pc_deploy_network_uuid }}
-         subnet_mask: {{ nutanix_pc_deploy_network_address | ansible.utils.ipaddr('netmask')}}
-         default_gateway: {{ nutanix_pc_deploy_gateway }}
+  version: {{ nutanix_pc_deploy_version }}
+  should_auto_register: {{ nutanix_pc_deploy_auto_register }}
+{% if nutanix_pc_vip %}
+  virtual_ip: {{ nutanix_pc_vip }}
+{% endif %}
+  pc_vm_list:
+{% for pcvm in nutanix_pc_deploy_vm_list %}
+    - vm_name: {{ pcvm.name }}
+      container_uuid: {{ nutanix_container_found_uuid }}
+      num_sockets: {{ nutanix_pc_num_sockets }}
+      data_disk_size_bytes: {{ nutanix_pc_data_disk_size | human_to_bytes }}
+      memory_size_bytes: {{ nutanix_pc_memory_size | human_to_bytes }}
+      dns_server_ip_list: {{ nutanix_pc_deploy_dns_list }}
+      nic_list:
+        - network_configuration:
+            network_uuid: {{ nutanix_pc_deploy_network_uuid }}
+            subnet_mask: {{ nutanix_pc_deploy_network_address | ansible.utils.ipaddr('netmask')}}
+            default_gateway: {{ nutanix_pc_deploy_gateway }}
+          ip_list:
+            - {{ pcvm.ip_address }}
+{% endfor %}
