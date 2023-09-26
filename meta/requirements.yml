@@ -1,0 +1,7 @@
+---
+- name: grdavies.role_nutanix_prism_api
+- name: grdavies.role_nutanix_prism_monitor_task
+- name: grdavies.role_nutanix_prism_initial_password
+- name: grdavies.role_nutanix_prism_eula
+- name: grdavies.role_nutanix_prism_pulse
+- name: grdavies.role_nutanix_pe_container_search

@@ -1,0 +1,23 @@
+---
+resources:
+  version: {{ role_nutanix_pe_deploy_pc_version }}
+  should_auto_register: {{ role_nutanix_pe_deploy_pc_auto_register }}
+{% if role_nutanix_pe_deploy_pc_vip | default(false) %}
+  virtual_ip: {{ role_nutanix_pe_deploy_pc_vip }}
+{% endif %}
+  pc_vm_list:
+{% for pcvm in role_nutanix_pe_deploy_pc_vm_list %}
+    - vm_name: {{ pcvm.name }}
+      container_uuid: {{ role_nutanix_pe_container_search_found_uuid }}
+      num_sockets: {{ role_nutanix_pe_deploy_pc_vcpu }}
+      data_disk_size_bytes: {{ role_nutanix_pe_deploy_pc_disk | human_to_bytes }}
+      memory_size_bytes: {{ role_nutanix_pe_deploy_pc_vram | human_to_bytes }}
+      dns_server_ip_list: {{ role_nutanix_pe_deploy_pc_dns_list }}
+      nic_list:
+        - network_configuration:
+            network_uuid: {{ role_nutanix_pe_deploy_pc_cluster_subnet_uuid }}
+            subnet_mask: {{ role_nutanix_pe_deploy_pc_network_address | ansible.utils.ipaddr('netmask')}}
+            default_gateway: {{ role_nutanix_pe_deploy_pc_gateway }}
+          ip_list:
+            - {{ pcvm.ip_address }}
+{% endfor %}

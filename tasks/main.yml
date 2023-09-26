@@ -1,60 +1,81 @@
 ---
 # tasks file for nutanix_role_prism_central_deploy
 - name: Setup connection to Nutanix API
-  ansible.builtin.include_tasks: setup_api.yml
+  ansible.builtin.include_role:
+    name: grdavies.role_nutanix_prism_api
+  vars:
+    role_nutanix_prism_api_host: "{{ role_nutanix_pe_deploy_pc_host }}"
+    role_nutanix_prism_api_username: "{{ role_nutanix_pe_deploy_pc_username }}"
+    role_nutanix_prism_api_password: "{{ role_nutanix_pe_deploy_pc_password }}"
+    role_nutanix_prism_api_port: "{{ role_nutanix_pe_deploy_pc_port }}"
+    role_nutanix_prism_api_validate_certs: "{{ role_nutanix_pe_deploy_pc_validate_certs }}"
+    role_nutanix_prism_api_debug: "{{ role_nutanix_pe_deploy_pc_debug }}"
 
 - name: "Task can only be run against Prism Element"
   ansible.builtin.fail:
-    msg: "'nutanix_host' needs to be set to the VIP of a Nutanix cluster. Please check the variable and try again."
+    msg: "'role_nutanix_pe_deploy_pc_host' needs to be set to the VIP of a Nutanix cluster. Please check the variable and try again."
   when:
-    - nutanix_endpoint_prism_type != 'pe'
+    - role_nutanix_prism_api_endpoint_type != 'pe'
 
 - name: Check variables
   ansible.builtin.import_tasks: check_variables.yml
 
-- name: Build PC config
-  ansible.builtin.import_tasks: build_pc_config.yml
-
 - name: Check for Pre-Existing PC VM
   ansible.builtin.import_tasks: check_existing_pcvm.yml
+
+- name: Build PC config
+  ansible.builtin.import_tasks: build_pc_config.yml
+  when:
+    - not role_nutanix_pe_deploy_pc_vm_exists | default(false)
+    - not role_nutanix_pe_deploy_pc_already_registered | default(false)
 
 - name: Deploy PC
   ansible.builtin.import_tasks: deploy_pc.yml
   when:
-    - not nutanix_pc_vm_exists | default(false)
-    - not nutanix_pc_already_registered | default(false)
+    - not role_nutanix_pe_deploy_pc_vm_exists | default(false)
+    - not role_nutanix_pe_deploy_pc_already_registered | default(false)
 
 - name: Set Prism Central 'admin' password
   ansible.builtin.import_role:
     name: grdavies.role_nutanix_prism_initial_password
   vars:
-    nutanix_prism_pwd_host: "{{ nutanix_pc_vip | default(nutanix_pc_deploy_vm_list[0].ip_address) }}"
-    nutanix_debug: false
-    nutanix_prism_pwd_username: admin
-    nutanix_prism_initial_password: "{{ nutanix_pc_deploy_default_password }}"
-    nutanix_prism_new_password: "{{ nutanix_pc_deploy_new_password }}"
+    role_nutanix_prism_initial_password_host: "{{ role_nutanix_pe_deploy_pc_vip | default(role_nutanix_pe_deploy_pc_vm_list[0].ip_address) }}"
+    role_nutanix_prism_initial_password_username: "{{ role_nutanix_pe_deploy_pc_default_username }}"
+    role_nutanix_prism_initial_password_port: "9440"
+    role_nutanix_prism_initial_password_validate_certs: false
+    role_nutanix_prism_initial_password_debug: "{{ role_nutanix_pe_deploy_pc_debug }}"
+    role_nutanix_prism_initial_password_default_password: "{{ role_nutanix_pe_deploy_pc_default_password }}"
+    role_nutanix_prism_initial_password_new_password: "{{ role_nutanix_pe_deploy_pc_new_password }}"
   when:
-    - nutanix_pc_deploy_new_password is defined
-    - not nutanix_pc_vm_exists | default(false)
-    - not nutanix_pc_already_registered | default(false)
+    - role_nutanix_pe_deploy_pc_new_password is defined
+    - not role_nutanix_pe_deploy_pc_vm_exists | default(false)
+    - not role_nutanix_pe_deploy_pc_registered | default(false)
+
+- name: Sleep for 15 seconds for scale out pc changes to be replicated
+  ansible.builtin.wait_for:
+    timeout: 15
+  delegate_to: localhost
+  when: role_nutanix_pe_deploy_pc_vm_list | length > 1
 
 - name: Accept Prism EULA
   ansible.builtin.import_role:
     name: grdavies.role_nutanix_prism_eula
   vars:
-    nutanix_prism_eula_host: "{{ nutanix_pc_vip | default(nutanix_pc_deploy_vm_list[0].ip_address) }}"
-    nutanix_prism_eula_username: admin
-    nutanix_prism_eula_password: "{{ nutanix_pc_deploy_new_password }}"
-    nutanix_prism_eula_eula_accept: "{{ nutanix_pc_deploy_eula_accept }}"
-    nutanix_prism_eula_full_name: "{{ nutanix_pc_deploy_eula_full_name }}"
-    nutanix_prism_eula_company_name: "{{ nutanix_pc_deploy_eula_company_name }}"
-    nutanix_prism_eula_job_title: "{{ nutanix_pc_deploy_eula_job_title }}"
+    role_nutanix_prism_eula_host: "{{ role_nutanix_pe_deploy_pc_vip | default(role_nutanix_pe_deploy_pc_vm_list[0].ip_address) }}"
+    role_nutanix_prism_eula_debug: "{{ role_nutanix_pe_deploy_pc_debug }}"
+    role_nutanix_prism_eula_username: "{{ role_nutanix_pe_deploy_pc_default_username }}"
+    role_nutanix_prism_eula_password: "{{ role_nutanix_pe_deploy_pc_new_password }}"
+    role_nutanix_prism_eula_accept: "{{ role_nutanix_pe_deploy_pc_eula_accept }}"
+    role_nutanix_prism_eula_full_name: "{{ role_nutanix_pe_deploy_pc_eula_full_name }}"
+    role_nutanix_prism_eula_company_name: "{{ role_nutanix_pe_deploy_pc_eula_company_name }}"
+    role_nutanix_prism_eula_job_title: "{{ role_nutanix_pe_deploy_pc_eula_job_title }}"
 
 - name: Enable Pulse
   ansible.builtin.import_role:
     name: grdavies.role_nutanix_prism_pulse
   vars:
-    nutanix_pulse_host: "{{ nutanix_pc_vip | default(nutanix_pc_deploy_vm_list[0].ip_address) }}"
-    nutanix_pulse_username: admin
-    nutanix_pulse_password: "{{ nutanix_pc_deploy_new_password }}"
-    nutanix_pulse_status: "{{ nutanix_pc_deploy_pulse }}"
+    role_nutanix_prism_pulse_host: "{{ role_nutanix_pe_deploy_pc_vip | default(role_nutanix_pe_deploy_pc_vm_list[0].ip_address) }}"
+    role_nutanix_prism_pulse_debug: "{{ role_nutanix_pe_deploy_pc_debug }}"
+    role_nutanix_prism_pulse_username: "{{ role_nutanix_pe_deploy_pc_default_username }}"
+    role_nutanix_prism_pulse_password: "{{ role_nutanix_pe_deploy_pc_new_password }}"
+    role_nutanix_prism_pulse_enable: "{{ role_nutanix_pe_deploy_pc_enable_pulse }}"

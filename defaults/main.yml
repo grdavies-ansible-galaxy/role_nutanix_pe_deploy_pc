@@ -1,43 +1,66 @@
 ---
 # defaults file for nutanix_role_prism_central_deploy
-nutanix_host: ""
-nutanix_username: ""
-nutanix_password: ""
-nutanix_port: 9440
-validate_certs: false
-nutanix_debug: false
-nutanix_pc_deploy_default_password: Nutanix/4u
-# nutanix_pc_deploy_new_password:
-nutanix_pc_deploy_pulse: true
-nutanix_pc_deploy_eula_accept: false
-# nutanix_pc_deploy_eula_full_name:
-# nutanix_pc_deploy_eula_company_name:
-# nutanix_pc_deploy_eula_job_title:
-nutanix_pc_deploy_auto_register: false
-nutanix_pc_deploy_vm_name: prism-central
-nutanix_pc_deploy_size: small
-nutanix_pc_deploy_retries: 24
-nutanix_pc_deploy_delay: 150
-# nutanix_pc_deploy_container_name:
-# nutanix_pc_deploy_version:
-# nutanix_pc_deploy_subnet_name:
-# nutanix_pc_deploy_network_address:
-# nutanix_pc_deploy_gateway:
-# nutanix_pc_deploy_ip_address:
-# nutanix_pc_deploy_dns_list:
-nutanix_pc_vm_exists: false
-nutanix_pc_already_registered: false
-
-nutanix_central_size_defaults:
+role_nutanix_pe_deploy_pc_host: ""
+role_nutanix_pe_deploy_pc_username: ""
+role_nutanix_pe_deploy_pc_password: ""
+role_nutanix_pe_deploy_pc_port: 9440
+role_nutanix_pe_deploy_pc_validate_certs: false
+role_nutanix_pe_deploy_pc_debug: false
+role_nutanix_pe_deploy_pc_default_username: admin
+role_nutanix_pe_deploy_pc_default_password: Nutanix/4u
+# role_nutanix_pe_deploy_pc_version
+# role_nutanix_pe_deploy_pc_version_list
+# role_nutanix_pe_deploy_pc_version_list_release_dates
+# role_nutanix_pe_deploy_pc_new_password
+role_nutanix_pe_deploy_pc_enable_pulse: true
+role_nutanix_pe_deploy_pc_eula_accept: false
+# role_nutanix_pe_deploy_pc_eula_full_name
+# role_nutanix_pe_deploy_pc_eula_company_name
+# role_nutanix_pe_deploy_pc_eula_job_title
+role_nutanix_pe_deploy_pc_auto_register: false
+role_nutanix_pe_deploy_pc_size: small
+role_nutanix_pe_deploy_pc_retries: 48
+role_nutanix_pe_deploy_pc_delay: 125
+# role_nutanix_pe_deploy_pc_container_name
+# role_nutanix_pe_deploy_pc_version
+# role_nutanix_pe_deploy_pc_subnet_name
+# role_nutanix_pe_deploy_pc_cluster_subnets
+# role_nutanix_pe_deploy_pc_cluster_subnet_uuid
+# role_nutanix_pe_deploy_pc_network_address
+# role_nutanix_pe_deploy_pc_gateway
+role_nutanix_pe_deploy_pc_vm_name: prism-central
+# role_nutanix_pe_deploy_pc_ip_address
+# role_nutanix_pe_deploy_pc_vip
+# role_nutanix_pe_deploy_pc_vm_list
+# role_nutanix_pe_deploy_pc_dns_list
+role_nutanix_pe_deploy_pc_vm_exists: false
+role_nutanix_pe_deploy_pc_already_registered: false
+# role_nutanix_pe_deploy_pc_vcpu
+# role_nutanix_pe_deploy_pc_disk
+# role_nutanix_pe_deploy_pc_vram
+# role_nutanix_pe_deploy_pc_metadata_vcpu
+# role_nutanix_pe_deploy_pc_metadata_disk
+# role_nutanix_pe_deploy_pc_metadata_vram
+# role_nutanix_pe_deploy_pc_default_vcpu
+# role_nutanix_pe_deploy_pc_default_disk
+# role_nutanix_pe_deploy_pc_default_vram
+# role_nutanix_pe_deploy_pc_version_data
+# role_nutanix_pe_deploy_pc_vm_check
+# role_nutanix_pe_deploy_pc_registration_state
+# role_nutanix_pe_deploy_pc_registered
+# role_nutanix_pe_deploy_pc_vm_exists
+# role_nutanix_pe_deploy_pc_task_result
+# role_nutanix_pe_deploy_pc_api_test
+role_nutanix_pe_deploy_pc_size_defaults:
   - size: small
     nutanix_pc_num_sockets: 6
-    nutanix_pc_data_disk_size: 500 GiB
-    nutanix_pc_memory_size: 26 GiB
+    nutanix_pc_data_disk_size: 500 GB
+    nutanix_pc_memory_size: 26 GB
   - size: large
     nutanix_pc_num_sockets: 10
-    nutanix_pc_data_disk_size: 2500 GiB
-    nutanix_pc_memory_size: 44 GiB
+    nutanix_pc_data_disk_size: 2500 GB
+    nutanix_pc_memory_size: 44 GB
   - size: xlarge
     nutanix_pc_num_sockets: 14
-    nutanix_pc_data_disk_size: 2500 GiB
-    nutanix_pc_dmemory_size: 60 GiB
+    nutanix_pc_data_disk_size: 2500 GB
+    nutanix_pc_dmemory_size: 60 GB

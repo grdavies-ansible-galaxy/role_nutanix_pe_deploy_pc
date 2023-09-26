@@ -1,62 +1,70 @@
 ---
 - name: Debug deployment HTTP POST body
   ansible.builtin.debug:
-    msg: "{{ lookup('template', 'pc-req.j2') | from_yaml | to_nice_json }}"
-  when: nutanix_debug
+    msg: "{{ lookup('template', 'pc-deploy-rest-post-body.yml.j2') | from_yaml | to_nice_json }}"
+  when: role_nutanix_pe_deploy_pc_debug
 
 - name: Deploying Prism Central to Cluster
   ansible.builtin.uri:
-    url: "https://{{ nutanix_host }}:{{ nutanix_port }}/api/nutanix/v3/prism_central"
+    url: "https://{{ role_nutanix_prism_api_url_base }}/api/nutanix/v3/prism_central"
     method: POST
-    validate_certs: "{{ validate_certs }}"
+    validate_certs: "{{ role_nutanix_pe_deploy_pc_validate_certs }}"
     body_format: json
-    body: "{{ lookup('template', 'pc-req.j2') | from_yaml | to_json }}"
+    body: "{{ lookup('template', 'pc-deploy-rest-post-body.yml.j2') | from_yaml | to_json }}"
     headers:
-      Authorization: "{{ nutanix_api_auth }}"
+      Authorization: "{{ role_nutanix_prism_api_auth_string_b64 }}"
     status_code: 202
     return_content: true
-  register: nutanix_deploy_pc
+  register: role_nutanix_pe_deploy_pc_task
   ignore_errors: false
 
 - name: Wait for Prism Central deploy task to complete
   ansible.builtin.import_role:
     name: grdavies.role_nutanix_prism_monitor_task
   vars:
-    nutanix_task_uuid: "{{ nutanix_deploy_pc.json.task_uuid }}"
-    nutanix_task_retries: "{{ nutanix_pc_deploy_retries }}"
-    nutanix_task_retry_delay: "{{ nutanix_pc_deploy_delay }}"
+    role_nutanix_prism_monitor_task_host: "{{ role_nutanix_pe_deploy_pc_host }}"
+    role_nutanix_prism_monitor_task_username: "{{ role_nutanix_pe_deploy_pc_username }}"
+    role_nutanix_prism_monitor_task_password: "{{ role_nutanix_pe_deploy_pc_password }}"
+    role_nutanix_prism_monitor_task_port: "{{ role_nutanix_pe_deploy_pc_port }}"
+    role_nutanix_prism_monitor_task_validate_certs: "{{ role_nutanix_pe_deploy_pc_validate_certs }}"
+    role_nutanix_prism_monitor_task_debug: "{{ role_nutanix_pe_deploy_pc_debug }}"
+    role_nutanix_prism_monitor_task_uuid: "{{ role_nutanix_pe_deploy_pc_task.json.task_uuid }}"
+    role_nutanix_prism_monitor_task_retries: "{{ role_nutanix_pe_deploy_pc_retries }}"
+    role_nutanix_prism_monitor_task_retry_delay: "{{ role_nutanix_pe_deploy_pc_delay }}"
 
 - name: Set nutanix_pc_deploy_task
   ansible.builtin.set_fact:
-    nutanix_pc_deploy_task: "{{ monitored_task }}"
+    role_nutanix_pe_deploy_pc_task_result: "{{ role_nutanix_prism_monitor_task_result }}"
 
 - name: Generate basic authorization string
   set_fact:
-    nutanix_pc_auth_string: "admin:{{ nutanix_pc_deploy_default_password }}"
+    role_nutanix_pe_deploy_pc_auth_string: "{{ role_nutanix_pe_deploy_pc_default_username }}:{{ role_nutanix_pe_deploy_pc_default_password }}"
   no_log: true
 
 - name: Generate authorization header
   ansible.builtin.set_fact:
-    nutanix_pc_api_auth: "Basic {{ nutanix_pc_auth_string | b64encode(encoding='ascii') }}"
+    role_nutanix_pe_deploy_pc_auth_string_b64: "Basic {{ role_nutanix_pe_deploy_pc_auth_string | b64encode(encoding='ascii') }}"
   no_log: true
-  when: nutanix_pc_auth_string is defined
+  when: role_nutanix_pe_deploy_pc_auth_string is defined
 
 - name: Unset basic authorization string
   ansible.builtin.set_fact:
-    nutanix_pc_auth_string: ""
+    role_nutanix_pe_deploy_pc_auth_string: ""
   no_log: true
-  when: nutanix_pc_auth_string is defined
+  when: role_nutanix_pe_deploy_pc_auth_string is defined
 
-- name: Wait for Prrism Central API to become available
+- name: Wait for Prism Central API to become available
   ansible.builtin.uri:
-    url: "https://{{ nutanix_pc_deploy_ip_address }}:{{ nutanix_port }}/api/nutanix/v3/users/me"
+    url:
+      "https://{{ role_nutanix_pe_deploy_pc_vip | default(role_nutanix_pe_deploy_pc_vm_list[0].ip_address) }}:{{ role_nutanix_pe_deploy_pc_port }}\
+      /api/nutanix/v3/users/me"
     method: GET
-    validate_certs: "{{ validate_certs }}"
+    validate_certs: "{{ role_nutanix_pe_deploy_pc_validate_certs }}"
     body_format: json
     headers:
-      Authorization: "{{ nutanix_pc_api_auth }}"
+      Authorization: "{{ role_nutanix_pe_deploy_pc_auth_string_b64 }}"
   ignore_errors: true
-  register: nutanix_pc_api_test
-  until: "nutanix_pc_api_test.status == 200"
+  register: role_nutanix_pe_deploy_pc_api_test
+  until: "role_nutanix_pe_deploy_pc_api_test.status == 200"
   retries: 30
   delay: 10

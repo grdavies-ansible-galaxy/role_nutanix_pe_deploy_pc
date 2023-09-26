@@ -1,0 +1,31 @@
+---
+- hosts: localhost
+  gather_facts: false
+  roles:
+    - role: ../..
+  vars:
+    role_nutanix_pe_deploy_pc_host: 10.38.11.199
+    role_nutanix_pe_deploy_pc_username: admin
+    role_nutanix_pe_deploy_pc_password: nx2Tech682!
+    # role_nutanix_pe_deploy_pc_debug: true
+    role_nutanix_pe_deploy_pc_version: pc.2023.3
+    role_nutanix_pe_deploy_pc_container_name: Default
+    role_nutanix_pe_deploy_pc_subnet_name: Primary
+    role_nutanix_pe_deploy_pc_network_address: 10.38.11.192/26
+    role_nutanix_pe_deploy_pc_gateway: 10.38.11.193
+    role_nutanix_pe_deploy_pc_dns_list:
+      - 10.42.194.10
+    role_nutanix_pe_deploy_pc_new_password: nx2Tech682!
+    role_nutanix_pe_deploy_pc_eula_accept: true
+    role_nutanix_pe_deploy_pc_eula_full_name: Ross Davies
+    role_nutanix_pe_deploy_pc_eula_company_name: Nutanix
+    role_nutanix_pe_deploy_pc_eula_job_title: SE
+    role_nutanix_pe_deploy_pc_deploy_size: small
+    role_nutanix_pe_deploy_pc_vip: 10.38.11.240
+    role_nutanix_pe_deploy_pc_vm_list:
+      - name: pcvm1
+        ip_address: 10.38.11.241
+      - name: pcvm2
+        ip_address: 10.38.11.242
+      - name: pcvm3
+        ip_address: 10.38.11.243

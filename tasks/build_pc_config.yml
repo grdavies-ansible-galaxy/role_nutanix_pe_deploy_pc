@@ -1,207 +1,172 @@
 ---
 - name: Get container UUID
   block:
-    - name: Set nutanix_container_found_uuid=None
+    - name: Set role_nutanix_pe_deploy_pc_container_uuid=None
       ansible.builtin.set_fact:
-        nutanix_container_found_uuid: "None"
+        role_nutanix_pe_deploy_pc_container_uuid: "None"
 
-    - name: Search for UUID for container "{{ nutanix_pc_deploy_container_name }}"
+    - name: Search for UUID for container "{{ role_nutanix_pe_deploy_pc_container_name }}"
       ansible.builtin.import_role:
         name: grdavies.role_nutanix_pe_container_search
       vars:
-        nutanix_container_search_name: "{{ nutanix_pc_deploy_container_name }}"
+        role_nutanix_pe_container_search_host: "{{ role_nutanix_pe_deploy_pc_host }}"
+        role_nutanix_pe_container_search_username: "{{ role_nutanix_pe_deploy_pc_username }}"
+        role_nutanix_pe_container_search_password: "{{ role_nutanix_pe_deploy_pc_password }}"
+        role_nutanix_pe_container_search_port: "{{ role_nutanix_pe_deploy_pc_port }}"
+        role_nutanix_pe_container_search_validate_certs: "{{ role_nutanix_pe_deploy_pc_validate_certs }}"
+        role_nutanix_pe_container_search_name: "{{ role_nutanix_pe_deploy_pc_container_name }}"
 
     - name: Container not found
       ansible.builtin.fail:
         msg:
-          "the container '{{ nutanix_pc_deploy_container_name }}' was not found. Please check the input \
-          variable nutanix_pc_deploy_container_name or that the container is present on this Nutanix cluster"
+          "the container '{{ role_nutanix_pe_deploy_pc_container_name }}' was not found. Please check the input \
+          variable role_nutanix_pe_deploy_pc_container_name or that the container is present on this Nutanix cluster"
       when:
-        - nutanix_container_found_uuid is not defined or nutanix_container_found_uuid == "None"
+        - role_nutanix_pe_container_search_found_uuid is not defined or role_nutanix_pe_container_search_found_uuid == "None"
 
-- name: Find uuid for network "{{ nutanix_pc_deploy_subnet_name }}"
+- name: Find uuid for network "{{ role_nutanix_pe_deploy_pc_subnet_name }}"
   block:
     - name: Get subnets from nutanix.ncp collection
       nutanix.ncp.ntnx_subnets_info:
-        nutanix_host: "{{ nutanix_host }}"
-        nutanix_username: "{{ nutanix_username }}"
-        nutanix_password: "{{ nutanix_password }}"
-        validate_certs: "{{ validate_certs }}"
-      register: nutanix_current_subnets
+        nutanix_host: "{{ role_nutanix_pe_deploy_pc_host }}"
+        nutanix_username: "{{ role_nutanix_pe_deploy_pc_username }}"
+        nutanix_password: "{{ role_nutanix_pe_deploy_pc_password }}"
+        validate_certs: "{{ role_nutanix_pe_deploy_pc_validate_certs }}"
+      register: role_nutanix_pe_deploy_pc_cluster_subnets
 
     - name: Search subnets list for subnet name and return its uuid
       ansible.builtin.set_fact:
-        nutanix_pc_deploy_network_uuid: "{{ item.metadata.uuid }}"
-      when: item.status.name == nutanix_pc_deploy_subnet_name
-      with_items: "{{ nutanix_current_subnets.response.entities }}"
-
-- name: Build VM list from legacy role variables (nutanix_pc_deploy_vm_name & nutanix_pc_deploy_ip_address)
-  ansible.builtin.set_fact:
-    nutanix_pc_deploy_vm_list:
-      - name: "{{ nutanix_pc_deploy_vm_name }}"
-        ip_addr: "{{ nutanix_pc_deploy_ip_address }}"
-  when:
-    - nutanix_pc_deploy_vm_list is undefined
-    - nutanix_pc_deploy_vm_name is defined
-    - nutanix_pc_deploy_ip_address is defined
+        role_nutanix_pe_deploy_pc_cluster_subnet_uuid: "{{ item.metadata.uuid }}"
+      when: item.status.name == role_nutanix_pe_deploy_pc_subnet_name
+      with_items: "{{ role_nutanix_pe_deploy_pc_cluster_subnets.response.entities }}"
 
 - name: PCVM list not the correct length
   ansible.builtin.fail:
     msg: "Either provide 1 or 3 pcvm name & ip addresses"
   when:
-    - nutanix_pc_deploy_vm_list | length not in [1,3]
+    - role_nutanix_pe_deploy_pc_vm_list | length not in [1,3]
 
 - name: PCVM VIP required for scale-out deployment
   ansible.builtin.fail:
-    msg: "Provide a value for 'nutanix_pc_vip' as this is a scale-out Prism Central deployment"
+    msg: "Provide a value for 'role_nutanix_pe_deploy_pc_vip' as this is a scale-out Prism Central deployment"
   when:
-    - nutanix_pc_vip is undefined
-    - nutanix_pc_deploy_vm_list | length > 1
+    - role_nutanix_pe_deploy_pc_vip is undefined
+    - role_nutanix_pe_deploy_pc_vm_list | length > 1
 
 - name: Debug
   when:
-    - nutanix_debug
+    - role_nutanix_pe_deploy_pc_debug
   block:
-    - name: Debug nutanix_current_subnets.response
+    - name: Debug role_nutanix_pe_deploy_pc_cluster_subnets.response
       ansible.builtin.debug:
-        var: nutanix_current_subnets.response
+        var: role_nutanix_pe_deploy_pc_cluster_subnets.response
 
-    - name: Debug nutanix_pc_deploy_network_uuid
+    - name: Debug role_nutanix_pe_deploy_pc_cluster_subnet_uuid
       ansible.builtin.debug:
-        var: nutanix_pc_deploy_network_uuid
+        var: role_nutanix_pe_deploy_pc_cluster_subnet_uuid
 
-    - name: Debug nutanix_pc_deploy_vm_list
+    - name: Debug role_nutanix_pe_deploy_pc_vm_list
       ansible.builtin.debug:
-        var: nutanix_pc_deploy_vm_list
+        var: role_nutanix_pe_deploy_pc_vm_list
 
 - name: Subnet not found
   ansible.builtin.fail:
     msg:
-      "the subnet '{{ nutanix_pc_deploy_subnet_name }}' was not found. Please check the input variable nutanix_pc_deploy_subnet_name or that \
+      "the subnet '{{ role_nutanix_pe_deploy_pc_subnet_name }}' was not found. Please check the input variable role_nutanix_pe_deploy_pc_subnet_name or that \
       the subnet is present on this Nutanix cluster"
   when:
-    - nutanix_pc_deploy_network_uuid is not defined
+    - role_nutanix_pe_deploy_pc_cluster_subnet_uuid is not defined
 
 - name: Get available PC versions
   ansible.builtin.uri:
-    url: "https://{{ nutanix_host }}:{{ nutanix_port }}/PrismGateway/services/rest/v1/upgrade/prism_central_deploy/softwares"
+    url: "https://{{ role_nutanix_prism_api_url_base }}/PrismGateway/services/rest/v1/upgrade/prism_central_deploy/softwares"
     method: GET
-    validate_certs: "{{ validate_certs }}"
+    validate_certs: "{{ role_nutanix_pe_deploy_pc_validate_certs }}"
     body_format: json
     headers:
-      Authorization: "{{ nutanix_api_auth }}"
+      Authorization: "{{ role_nutanix_prism_api_auth_string_b64 }}"
     status_code: 200
     return_content: true
-  register: nutanix_pc_deploy_versions
+  register: role_nutanix_pe_deploy_pc_version_list
   ignore_errors: false
 
-- name: Debug nutanix_pc_deploy_versions
+- name: Debug role_nutanix_pe_deploy_pc_version_list
   ansible.builtin.debug:
-    msg: "{{ nutanix_pc_deploy_versions }}"
-  when: nutanix_debug
+    msg: "{{ role_nutanix_pe_deploy_pc_version_list }}"
+  when: role_nutanix_pe_deploy_pc_debug
 
 - name: Get latest PC for this clusters AOS release
   ansible.builtin.set_fact:
-    nutanix_pc_deploy_rdates: "{{ nutanix_pc_deploy_versions.json | json_query('entities[*].releaseDate') | max }}"
+    role_nutanix_pe_deploy_pc_version_list_release_dates: "{{ role_nutanix_pe_deploy_pc_version_list.json | json_query('entities[*].releaseDate') | max }}"
 
-- name: Debug nutanix_pc_deploy_rdates
+- name: Debug role_nutanix_pe_deploy_pc_version_list_release_dates
   ansible.builtin.debug:
-    var: nutanix_pc_deploy_rdates
-  when: nutanix_debug
+    var: role_nutanix_pe_deploy_pc_version_list_release_dates
+  when: role_nutanix_pe_deploy_pc_debug
 
 - name: Get latest PC version name for this clusters AOS release
   ansible.builtin.set_fact:
-    nutanix_pc_deploy_version: '{{ nutanix_pc_deploy_versions.json | json_query(query) | join("") }}'
+    role_nutanix_pe_deploy_pc_version: '{{ role_nutanix_pe_deploy_pc_version_list.json | json_query(query) | join("") }}'
   vars:
-    query: "entities[?releaseDate==`{{ nutanix_pc_deploy_rdates }}`].version"
-  when: nutanix_pc_deploy_version is not defined
+    query: "entities[?releaseDate==`{{ role_nutanix_pe_deploy_pc_version_list_release_dates }}`].version"
+  when: role_nutanix_pe_deploy_pc_version is not defined
 
-- name: Debug nutanix_pc_deploy_version
+- name: Debug role_nutanix_pe_deploy_pc_version
   ansible.builtin.debug:
-    msg: "{{ nutanix_pc_deploy_version }}"
-  when: nutanix_debug
+    msg: "{{ role_nutanix_pe_deploy_pc_version }}"
+  when: role_nutanix_pe_deploy_pc_debug
 
-- name: Get latest PC version data for "{{ nutanix_pc_deploy_version }}"
+- name: Get latest PC version data for "{{ role_nutanix_pe_deploy_pc_version }}"
   ansible.builtin.set_fact:
-    nutanix_pc_deploy_version_data: '{{ nutanix_pc_deploy_versions.json | json_query(query) | join("") }}'
+    role_nutanix_pe_deploy_pc_version_data: '{{ role_nutanix_pe_deploy_pc_version_list.json | json_query(query) | join("") }}'
   vars:
-    query: "entities[?name==`{{ nutanix_pc_deploy_version }}`]"
+    query: "entities[?name==`{{ role_nutanix_pe_deploy_pc_version }}`]"
 
 - name: Specified PC version not available.
   ansible.builtin.fail:
     msg:
-      "The Prism Central release specified '{{ nutanix_pc_deploy_version }}' cannot be found.
+      "The Prism Central release specified '{{ role_nutanix_pe_deploy_pc_version }}' cannot be found.
       Please ensure that this release is enabled for 1-click deployment or has been manually uploaded to the cluster."
-  when: not nutanix_pc_deploy_version_data
+  when: not role_nutanix_pe_deploy_pc_version_data
 
-- name: Debug nutanix_pc_deploy_versions
+- name: Debug role_nutanix_pe_deploy_pc_version_list
   ansible.builtin.debug:
-    msg: "{{ nutanix_pc_deploy_version_data }}"
-  when: nutanix_debug
+    msg: "{{ role_nutanix_pe_deploy_pc_version_data }}"
+  when: role_nutanix_pe_deploy_pc_debug
 
 - name: Get PC deployment size from release metadata
   ansible.builtin.set_fact:
-    nutanix_pc_deploy_num_sockets: "{{ nutanix_pc_deploy_version_data.prismCentralSizes | json_query(query) | first | json_query('vcpus') }}"
-    nutanix_pc_deploy_data_disk_size: "{{ nutanix_pc_deploy_version_data.prismCentralSizes | json_query(query) | first | json_query('diskSizeInGib') }} GiB"
-    nutanix_pc_deploy_memory_size: "{{ nutanix_pc_deploy_version_data.prismCentralSizes | json_query(query) | first | json_query('memorySizeInGib') }} GiB"
+    role_nutanix_pe_deploy_pc_metadata_vcpu: "{{ role_nutanix_pe_deploy_pc_version_data.prismCentralSizes | json_query(query) | first | json_query('vcpus') }}"
+    role_nutanix_pe_deploy_pc_metadata_disk: "{{ role_nutanix_pe_deploy_pc_version_data.prismCentralSizes | json_query(query) | first | json_query('diskSizeInGib') }} GB"
+    role_nutanix_pe_deploy_pc_metadata_vram: "{{ role_nutanix_pe_deploy_pc_version_data.prismCentralSizes | json_query(query) | first | json_query('memorySizeInGib') }} GB"
   vars:
-    query: "[?pcVmFormFactor==`{{ nutanix_pc_deploy_size }}`]"
+    query: "[?pcVmFormFactor==`{{ role_nutanix_pe_deploy_pc_deploy_size }}`]"
 
 - name: Get PC deployment size from defaults
   ansible.builtin.set_fact:
-    nutanix_pc_default_num_sockets: "{{ nutanix_central_size_defaults | json_query(query) | first | json_query('vcpus') }}"
-    nutanix_pc_default_data_disk_size: "{{ nutanix_central_size_defaults | json_query(query) | first | json_query('diskSizeInGib') }}"
-    nutanix_pc_default_memory_size: "{{ nutanix_central_size_defaults | json_query(query) | first | json_query('memorySizeInGib') }}"
+    role_nutanix_pe_deploy_pc_default_vcpu: "{{ role_nutanix_pe_deploy_pc_size_defaults | json_query(query) | first | json_query('nutanix_pc_num_sockets') }}"
+    role_nutanix_pe_deploy_pc_default_disk: "{{ role_nutanix_pe_deploy_pc_size_defaults | json_query(query) | first | json_query('nutanix_pc_data_disk_size') }}"
+    role_nutanix_pe_deploy_pc_default_vram: "{{ role_nutanix_pe_deploy_pc_size_defaults | json_query(query) | first | json_query('nutanix_pc_memory_size') }}"
   vars:
-    query: "[?size==`{{ nutanix_pc_deploy_size }}`]"
+    query: "[?size==`{{ role_nutanix_pe_deploy_pc_deploy_size }}`]"
 
 - name: Set PC deployment size
   ansible.builtin.set_fact:
-    nutanix_pc_num_sockets: "{{ nutanix_pc_deploy_num_sockets | default(nutanix_pc_default_num_sockets) }}"
-    nutanix_pc_data_disk_size: "{{ nutanix_pc_deploy_data_disk_size | default(nutanix_pc_default_data_disk_size) }}"
-    nutanix_pc_memory_size: "{{ nutanix_pc_deploy_memory_size | default(nutanix_pc_default_memory_size) }}"
+    role_nutanix_pe_deploy_pc_vcpu: "{{ role_nutanix_pe_deploy_pc_metadata_vcpu | default(role_nutanix_pe_deploy_pc_default_vcpu) }}"
+    role_nutanix_pe_deploy_pc_disk: "{{ role_nutanix_pe_deploy_pc_metadata_disk | default(role_nutanix_pe_deploy_pc_default_disk) }}"
+    role_nutanix_pe_deploy_pc_vram: "{{ role_nutanix_pe_deploy_pc_metadata_vram | default(role_nutanix_pe_deploy_pc_default_vram) }}"
 
-- name: Debug nutanix_pc_deploy_num_sockets
+- name: Debug role_nutanix_pe_deploy_pc_vcpu
   ansible.builtin.debug:
-    var: nutanix_pc_deploy_num_sockets
-  when: nutanix_debug
+    msg: "vcpu: metadata={{ role_nutanix_pe_deploy_pc_metadata_vcpu }}, default={{ role_nutanix_pe_deploy_pc_default_vcpu }}, value={{ role_nutanix_pe_deploy_pc_vcpu }}"
+  when: role_nutanix_pe_deploy_pc_debug
 
-- name: Debug nutanix_pc_default_num_sockets
+- name: Debug role_nutanix_pe_deploy_pc_disk
   ansible.builtin.debug:
-    var: nutanix_pc_default_num_sockets
-  when: nutanix_debug
+    msg: "vcpu: metadata={{ role_nutanix_pe_deploy_pc_default_disk }}, default={{ role_nutanix_pe_deploy_pc_default_disk }}, value={{ role_nutanix_pe_deploy_pc_disk }}"
+  when: role_nutanix_pe_deploy_pc_debug
 
-- name: Debug nutanix_pc_num_sockets
+- name: Debug role_nutanix_pe_deploy_pc_vram
   ansible.builtin.debug:
-    var: nutanix_pc_num_sockets
-  when: nutanix_debug
-
-- name: Debug nutanix_pc_deploy_data_disk_size
-  ansible.builtin.debug:
-    var: nutanix_pc_deploy_data_disk_size
-  when: nutanix_debug
-
-- name: Debug nutanix_pc_default_data_disk_size
-  ansible.builtin.debug:
-    var: nutanix_pc_default_data_disk_size
-  when: nutanix_debug
-
-- name: Debug nutanix_pc_data_disk_size
-  ansible.builtin.debug:
-    var: nutanix_pc_data_disk_size
-  when: nutanix_debug
-
-- name: Debug nutanix_pc_deploy_memory_size
-  ansible.builtin.debug:
-    var: nutanix_pc_deploy_memory_size
-  when: nutanix_debug
-
-- name: Debug nutanix_pc_default_memory_size
-  ansible.builtin.debug:
-    var: nutanix_pc_default_memory_size
-  when: nutanix_debug
-
-- name: Debug nutanix_pc_memory_size
-  ansible.builtin.debug:
-    var: nutanix_pc_memory_size
-  when: nutanix_debug
+    msg: "vcpu: metadata={{ role_nutanix_pe_deploy_pc_metadata_vram }}, default={{ role_nutanix_pe_deploy_pc_default_vram }}, value={{ role_nutanix_pe_deploy_pc_vram }}"
+  when: role_nutanix_pe_deploy_pc_debug

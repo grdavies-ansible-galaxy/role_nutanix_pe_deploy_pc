@@ -2,66 +2,66 @@
 - name: Check if prism central vm exists
   delegate_to: 127.0.0.1
   nutanix.ncp.ntnx_vms_info:
-    nutanix_host: "10.38.26.37"
-    nutanix_username: admin
-    nutanix_password: "nx2Tech407!"
-    validate_certs: false
+    nutanix_host: "{{ role_nutanix_pe_deploy_pc_host }}"
+    nutanix_username: "{{ role_nutanix_pe_deploy_pc_username }}"
+    nutanix_password: "{{ role_nutanix_pe_deploy_pc_password }}"
+    validate_certs: "{{ role_nutanix_pe_deploy_pc_validate_certs }}"
     filter:
       vm_name: "{{ item.name }}"
     kind: vm
-  register: nutanix_pc_vm_check
+  register: role_nutanix_pe_deploy_pc_vm_check
   ignore_errors: true
-  loop: "{{ nutanix_pc_deploy_vm_list }}"
+  loop: "{{ role_nutanix_pe_deploy_pc_vm_list }}"
 
-- name: Debug nutanix_pc_vm_check
+- name: Debug role_nutanix_pe_deploy_pc_vm_check
   ansible.builtin.debug:
-    msg: "{{ nutanix_pc_vm_check }}"
-  when: nutanix_debug
+    msg: "{{ role_nutanix_pe_deploy_pc_vm_check }}"
+  when: role_nutanix_pe_deploy_pc_debug
 
 - name: Too many VMs found
   ansible.builtin.fail:
     msg: "Too many VM name matches found for '{{ item.item.name }}'. Investigate cluster and retry playbook."
-  loop: "{{ nutanix_pc_vm_check.results }}"
+  loop: "{{ role_nutanix_pe_deploy_pc_vm_check.results }}"
   loop_control:
     label: "{{ item.item }}"
   when:
     - item.response.metadata.length > 1
 
-- name: Set nutanix_pc_vm_exists
+- name: Set role_nutanix_pe_deploy_pc_vm_exists
   ansible.builtin.set_fact:
-    nutanix_pc_vm_exists: true
-  loop: "{{ nutanix_pc_vm_check.results }}"
+    role_nutanix_pe_deploy_pc_vm_exists: true
+  loop: "{{ role_nutanix_pe_deploy_pc_vm_check.results }}"
   loop_control:
     label: "{{ item.item }}"
   when: item.response.metadata.length == 1
 
-- name: Debug nutanix_pc_vm_exists
+- name: Debug role_nutanix_pe_deploy_pc_vm_exists
   ansible.builtin.debug:
-    msg: "{{ nutanix_pc_vm_exists | default(false) }}"
-  when: nutanix_debug
+    msg: "{{ role_nutanix_pe_deploy_pc_vm_exists | default(false) }}"
+  when: role_nutanix_pe_deploy_pc_debug
 
 - name: Get Prism Element registration state
   ansible.builtin.uri:
-    url: "https://{{ nutanix_host }}:{{ nutanix_port }}/PrismGateway/services/rest/v1/multicluster/cluster_external_state"
+    url: "https://{{ role_nutanix_prism_api_url_base }}/PrismGateway/services/rest/v1/multicluster/cluster_external_state"
     method: GET
-    validate_certs: "{{ validate_certs }}"
+    validate_certs: "{{ role_nutanix_pe_deploy_pc_validate_certs }}"
     headers:
-      Authorization: "{{ nutanix_api_auth }}"
+      Authorization: "{{ role_nutanix_prism_api_auth_string_b64 }}"
     status_code: 200
-  register: nutanix_pc_register_current_state
+  register: role_nutanix_pe_deploy_pc_registration_state
   no_log: true
 
-- name: Debug nutanix_pc_register_current_state.json
+- name: Debug role_nutanix_pe_deploy_pc_registration_state.json
   ansible.builtin.debug:
-    var: nutanix_pc_register_current_state.json
-  when: nutanix_debug
+    var: role_nutanix_pe_deploy_pc_registration_state.json
+  when: role_nutanix_pe_deploy_pc_debug
 
-- name: Set nutanix_pc_already_registered
+- name: Set role_nutanix_pe_deploy_pc_registered
   ansible.builtin.set_fact:
-    nutanix_pc_already_registered: true
-  when: nutanix_pc_register_current_state.json | length != 0
+    role_nutanix_pe_deploy_pc_registered: true
+  when: role_nutanix_pe_deploy_pc_registration_state.json | length != 0
 
-- name: Debug nutanix_pc_already_registered
+- name: Debug role_nutanix_pe_deploy_pc_registered
   ansible.builtin.debug:
-    var: nutanix_pc_already_registered
-  when: nutanix_debug
+    var: role_nutanix_pe_deploy_pc_registered
+  when: role_nutanix_pe_deploy_pc_debug
