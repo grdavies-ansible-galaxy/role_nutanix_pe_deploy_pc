@@ -11,7 +11,7 @@ role_nutanix_pe_deploy_pc_default_password: Nutanix/4u
 # role_nutanix_pe_deploy_pc_version
 # role_nutanix_pe_deploy_pc_version_list
 # role_nutanix_pe_deploy_pc_version_list_release_dates
-# role_nutanix_pe_deploy_pc_new_password
+# role_nutanix_pe_deploy_pc_password
 role_nutanix_pe_deploy_pc_enable_pulse: true
 role_nutanix_pe_deploy_pc_eula_accept: false
 # role_nutanix_pe_deploy_pc_eula_full_name
