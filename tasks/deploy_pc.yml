@@ -8,7 +8,7 @@
   ansible.builtin.uri:
     url: "https://{{ role_nutanix_prism_api_url_base }}/api/nutanix/v3/prism_central"
     method: POST
-    validate_certs: "{{ role_nutanix_pe_deploy_pc_validate_certs }}"
+    validate_certs: "{{ role_nutanix_pe_deploy_pc_host_validate_certs }}"
     body_format: json
     body: "{{ lookup('template', 'pc-deploy-rest-post-body.yml.j2') | from_yaml | to_json }}"
     headers:
@@ -23,10 +23,10 @@
     name: grdavies.role_nutanix_prism_monitor_task
   vars:
     role_nutanix_prism_monitor_task_host: "{{ role_nutanix_pe_deploy_pc_host }}"
-    role_nutanix_prism_monitor_task_username: "{{ role_nutanix_pe_deploy_pc_username }}"
-    role_nutanix_prism_monitor_task_password: "{{ role_nutanix_pe_deploy_pc_password }}"
-    role_nutanix_prism_monitor_task_port: "{{ role_nutanix_pe_deploy_pc_port }}"
-    role_nutanix_prism_monitor_task_validate_certs: "{{ role_nutanix_pe_deploy_pc_validate_certs }}"
+    role_nutanix_prism_monitor_task_host_username: "{{ role_nutanix_pe_deploy_pc_host_username }}"
+    role_nutanix_prism_monitor_task_host_password: "{{ role_nutanix_pe_deploy_pc_host_password }}"
+    role_nutanix_prism_monitor_task_host_port: "{{ role_nutanix_pe_deploy_pc_host_port }}"
+    role_nutanix_prism_monitor_task_host_validate_certs: "{{ role_nutanix_pe_deploy_pc_host_validate_certs }}"
     role_nutanix_prism_monitor_task_debug: "{{ role_nutanix_pe_deploy_pc_debug }}"
     role_nutanix_prism_monitor_task_uuid: "{{ role_nutanix_pe_deploy_pc_task.json.task_uuid }}"
     role_nutanix_prism_monitor_task_retries: "{{ role_nutanix_pe_deploy_pc_retries }}"
@@ -56,10 +56,10 @@
 - name: Wait for Prism Central API to become available
   ansible.builtin.uri:
     url:
-      "https://{{ role_nutanix_pe_deploy_pc_vip | default(role_nutanix_pe_deploy_pc_vm_list[0].ip_address) }}:{{ role_nutanix_pe_deploy_pc_port }}\
+      "https://{{ role_nutanix_pe_deploy_pc_vip | default(role_nutanix_pe_deploy_pc_vm_list[0].ip_address) }}:{{ role_nutanix_pe_deploy_pc_host_port }}\
       /api/nutanix/v3/users/me"
     method: GET
-    validate_certs: "{{ role_nutanix_pe_deploy_pc_validate_certs }}"
+    validate_certs: "{{ role_nutanix_pe_deploy_pc_host_validate_certs }}"
     body_format: json
     headers:
       Authorization: "{{ role_nutanix_pe_deploy_pc_auth_string_b64 }}"

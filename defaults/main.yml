@@ -1,10 +1,10 @@
 ---
 # defaults file for nutanix_role_prism_central_deploy
 role_nutanix_pe_deploy_pc_host: ""
-role_nutanix_pe_deploy_pc_username: ""
-role_nutanix_pe_deploy_pc_password: ""
-role_nutanix_pe_deploy_pc_port: 9440
-role_nutanix_pe_deploy_pc_validate_certs: false
+role_nutanix_pe_deploy_pc_host_username: ""
+role_nutanix_pe_deploy_pc_host_password: ""
+role_nutanix_pe_deploy_pc_host_port: 9440
+role_nutanix_pe_deploy_pc_host_validate_certs: false
 role_nutanix_pe_deploy_pc_debug: false
 role_nutanix_pe_deploy_pc_default_username: admin
 role_nutanix_pe_deploy_pc_default_password: Nutanix/4u

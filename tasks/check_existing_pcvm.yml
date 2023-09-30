@@ -3,9 +3,9 @@
   delegate_to: 127.0.0.1
   nutanix.ncp.ntnx_vms_info:
     nutanix_host: "{{ role_nutanix_pe_deploy_pc_host }}"
-    nutanix_username: "{{ role_nutanix_pe_deploy_pc_username }}"
-    nutanix_password: "{{ role_nutanix_pe_deploy_pc_password }}"
-    validate_certs: "{{ role_nutanix_pe_deploy_pc_validate_certs }}"
+    nutanix_username: "{{ role_nutanix_pe_deploy_pc_host_username }}"
+    nutanix_password: "{{ role_nutanix_pe_deploy_pc_host_password }}"
+    validate_certs: "{{ role_nutanix_pe_deploy_pc_host_validate_certs }}"
     filter:
       vm_name: "{{ item.name }}"
     kind: vm
@@ -44,7 +44,7 @@
   ansible.builtin.uri:
     url: "https://{{ role_nutanix_prism_api_url_base }}/PrismGateway/services/rest/v1/multicluster/cluster_external_state"
     method: GET
-    validate_certs: "{{ role_nutanix_pe_deploy_pc_validate_certs }}"
+    validate_certs: "{{ role_nutanix_pe_deploy_pc_host_validate_certs }}"
     headers:
       Authorization: "{{ role_nutanix_prism_api_auth_string_b64 }}"
     status_code: 200

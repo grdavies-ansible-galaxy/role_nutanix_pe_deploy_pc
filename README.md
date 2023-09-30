@@ -23,10 +23,10 @@ ansible-galaxy install grdavies.role_nutanix_pe_container_search --force
 | Variable                                            | Required | Default         | Choices                                                                         | Comments                                                                                                                                                                                                                                 |
 |-----------------------------------------------------|----------|-----------------|---------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | role_nutanix_pe_deploy_pc_host                      | yes      |                 |                                                                                 | The IP address or FQDN for the Prism (Element only) to which you want to connect.                                                                                                                                                        |
-| role_nutanix_pe_deploy_pc_username                  | yes      |                 |                                                                                 | A valid username with appropriate rights to access the Nutanix API.                                                                                                                                                                      |
-| role_nutanix_pe_deploy_pc_password                  | yes      |                 |                                                                                 | A valid password for the supplied username.                                                                                                                                                                                              |
-| role_nutanix_pe_deploy_pc_port                      | no       | 9440            |                                                                                 | The Prism TCP port.                                                                                                                                                                                                                      |
-| role_nutanix_pe_deploy_pc_validate_certs            | no       | false           | true | false                                                                    | Whether to check if Prism UI certificates are valid.                                                                                                                                                                                     |
+| role_nutanix_pe_deploy_pc_host_username             | yes      |                 |                                                                                 | A valid username with appropriate rights to access the Nutanix API.                                                                                                                                                                      |
+| role_nutanix_pe_deploy_pc_host_password             | yes      |                 |                                                                                 | A valid password for the supplied username.                                                                                                                                                                                              |
+| role_nutanix_pe_deploy_pc_host_port                 | no       | 9440            |                                                                                 | The Prism TCP port.                                                                                                                                                                                                                      |
+| role_nutanix_pe_deploy_pc_host_validate_certs       | no       | false           | true | false                                                                    | Whether to check if Prism UI certificates are valid.                                                                                                                                                                                     |
 | role_nutanix_pe_deploy_pc_vip                       | no       | ''              |                                                                                 | Required if a scale-out Prism Central deployment is performed, otherwise this variable should be omitted.                                                                                                                                |
 | role_nutanix_pe_deploy_pc_vm_list                   | yes      | []              |                                                                                 | List of Prism Central VM name and IP address in a list format. Provide 1 entry for a standard Prism Central deployment, provide 3 entries for a scale-out Prism Central deployment. [{ "name": "pcvm1", "ip_address": "192.168.10.41" }] |
 | role_nutanix_pe_deploy_pc_deploy_size               | no       | small           | ['small', 'large', 'xlarge']                                                    | See https://portal.nutanix.com/page/documents/details?targetId=Release-Notes-Prism-Central-vpc_2022_6:top-pc-scalability-r.html for details on PC sizing.                                                                                |
@@ -59,8 +59,8 @@ ansible-galaxy install grdavies.role_nutanix_pe_container_search --force
     - role: grdavies.role_nutanix_pe_deploy_pc
   vars:
     role_nutanix_pe_deploy_pc_host: 10.38.11.199
-    role_nutanix_pe_deploy_pc_username: admin
-    role_nutanix_pe_deploy_pc_password: nx2Tech682!
+    role_nutanix_pe_deploy_pc_host_username: admin
+    role_nutanix_pe_deploy_pc_host_password: nx2Tech682!
     role_nutanix_pe_deploy_pc_debug: true
     role_nutanix_pe_deploy_pc_version: pc.2023.3
     role_nutanix_pe_deploy_pc_container_name: Default
@@ -89,8 +89,8 @@ ansible-galaxy install grdavies.role_nutanix_pe_container_search --force
     - role: grdavies.role_nutanix_pe_deploy_pc
   vars:
     role_nutanix_pe_deploy_pc_host: 10.38.11.199
-    role_nutanix_pe_deploy_pc_username: admin
-    role_nutanix_pe_deploy_pc_password: nx2Tech682!
+    role_nutanix_pe_deploy_pc_host_username: admin
+    role_nutanix_pe_deploy_pc_host_password: nx2Tech682!
     role_nutanix_pe_deploy_pc_debug: true
     role_nutanix_pe_deploy_pc_version: pc.2023.3
     role_nutanix_pe_deploy_pc_container_name: Default

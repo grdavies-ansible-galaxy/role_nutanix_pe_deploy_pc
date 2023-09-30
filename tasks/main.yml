@@ -5,10 +5,10 @@
     name: grdavies.role_nutanix_prism_api
   vars:
     role_nutanix_prism_api_host: "{{ role_nutanix_pe_deploy_pc_host }}"
-    role_nutanix_prism_api_username: "{{ role_nutanix_pe_deploy_pc_username }}"
-    role_nutanix_prism_api_password: "{{ role_nutanix_pe_deploy_pc_password }}"
-    role_nutanix_prism_api_port: "{{ role_nutanix_pe_deploy_pc_port }}"
-    role_nutanix_prism_api_validate_certs: "{{ role_nutanix_pe_deploy_pc_validate_certs }}"
+    role_nutanix_prism_api_host_username: "{{ role_nutanix_pe_deploy_pc_host_username }}"
+    role_nutanix_prism_api_host_password: "{{ role_nutanix_pe_deploy_pc_host_password }}"
+    role_nutanix_prism_api_host_port: "{{ role_nutanix_pe_deploy_pc_host_port }}"
+    role_nutanix_prism_api_host_validate_certs: "{{ role_nutanix_pe_deploy_pc_host_validate_certs }}"
     role_nutanix_prism_api_debug: "{{ role_nutanix_pe_deploy_pc_debug }}"
 
 - name: "Task can only be run against Prism Element"
@@ -40,12 +40,12 @@
     name: grdavies.role_nutanix_prism_initial_password
   vars:
     role_nutanix_prism_initial_password_host: "{{ role_nutanix_pe_deploy_pc_vip | default(role_nutanix_pe_deploy_pc_vm_list[0].ip_address) }}"
-    role_nutanix_prism_initial_password_username: "{{ role_nutanix_pe_deploy_pc_default_username }}"
-    role_nutanix_prism_initial_password_port: "9440"
-    role_nutanix_prism_initial_password_validate_certs: false
-    role_nutanix_prism_initial_password_debug: "{{ role_nutanix_pe_deploy_pc_debug }}"
-    role_nutanix_prism_initial_password_default_password: "{{ role_nutanix_pe_deploy_pc_default_password }}"
+    role_nutanix_prism_initial_password_host_username: "{{ role_nutanix_pe_deploy_pc_default_username }}"
+    role_nutanix_prism_initial_password_host_port: "9440"
+    role_nutanix_prism_initial_password_host_validate_certs: false
+    role_nutanix_prism_initial_password_host_password: "{{ role_nutanix_pe_deploy_pc_default_password }}"
     role_nutanix_prism_initial_password_new_password: "{{ role_nutanix_pe_deploy_pc_new_password }}"
+    role_nutanix_prism_initial_password_debug: "{{ role_nutanix_pe_deploy_pc_debug }}"
   when:
     - role_nutanix_pe_deploy_pc_new_password is defined
     - not role_nutanix_pe_deploy_pc_vm_exists | default(false)
@@ -62,20 +62,20 @@
     name: grdavies.role_nutanix_prism_eula
   vars:
     role_nutanix_prism_eula_host: "{{ role_nutanix_pe_deploy_pc_vip | default(role_nutanix_pe_deploy_pc_vm_list[0].ip_address) }}"
-    role_nutanix_prism_eula_debug: "{{ role_nutanix_pe_deploy_pc_debug }}"
-    role_nutanix_prism_eula_username: "{{ role_nutanix_pe_deploy_pc_default_username }}"
-    role_nutanix_prism_eula_password: "{{ role_nutanix_pe_deploy_pc_new_password }}"
+    role_nutanix_prism_eula_host_username: "{{ role_nutanix_pe_deploy_pc_default_username }}"
+    role_nutanix_prism_eula_host_password: "{{ role_nutanix_pe_deploy_pc_new_password }}"
     role_nutanix_prism_eula_accept: "{{ role_nutanix_pe_deploy_pc_eula_accept }}"
     role_nutanix_prism_eula_full_name: "{{ role_nutanix_pe_deploy_pc_eula_full_name }}"
     role_nutanix_prism_eula_company_name: "{{ role_nutanix_pe_deploy_pc_eula_company_name }}"
     role_nutanix_prism_eula_job_title: "{{ role_nutanix_pe_deploy_pc_eula_job_title }}"
+    role_nutanix_prism_eula_debug: "{{ role_nutanix_pe_deploy_pc_debug }}"
 
 - name: Enable Pulse
   ansible.builtin.import_role:
     name: grdavies.role_nutanix_prism_pulse
   vars:
     role_nutanix_prism_pulse_host: "{{ role_nutanix_pe_deploy_pc_vip | default(role_nutanix_pe_deploy_pc_vm_list[0].ip_address) }}"
-    role_nutanix_prism_pulse_debug: "{{ role_nutanix_pe_deploy_pc_debug }}"
-    role_nutanix_prism_pulse_username: "{{ role_nutanix_pe_deploy_pc_default_username }}"
-    role_nutanix_prism_pulse_password: "{{ role_nutanix_pe_deploy_pc_new_password }}"
+    role_nutanix_prism_pulse_host_username: "{{ role_nutanix_pe_deploy_pc_default_username }}"
+    role_nutanix_prism_pulse_host_password: "{{ role_nutanix_pe_deploy_pc_new_password }}"
     role_nutanix_prism_pulse_enable: "{{ role_nutanix_pe_deploy_pc_enable_pulse }}"
+    role_nutanix_prism_pulse_debug: "{{ role_nutanix_pe_deploy_pc_debug }}"

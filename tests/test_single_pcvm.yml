@@ -5,8 +5,8 @@
     - role: ../..
   vars:
     role_nutanix_pe_deploy_pc_host: 10.38.11.199
-    role_nutanix_pe_deploy_pc_username: admin
-    role_nutanix_pe_deploy_pc_password: nx2Tech682!
+    role_nutanix_pe_deploy_pc_host_username: admin
+    role_nutanix_pe_deploy_pc_host_password: nx2Tech682!
     #  role_nutanix_pe_deploy_pc_debug: true
      role_nutanix_pe_deploy_pc_version: pc.2023.3
     role_nutanix_pe_deploy_pc_container_name: Default
