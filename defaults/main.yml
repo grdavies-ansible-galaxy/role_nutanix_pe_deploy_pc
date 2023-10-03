@@ -54,13 +54,13 @@ role_nutanix_pe_deploy_pc_already_registered: false
 role_nutanix_pe_deploy_pc_size_defaults:
   - size: small
     nutanix_pc_num_sockets: 6
-    nutanix_pc_data_disk_size: 500 GB
-    nutanix_pc_memory_size: 26 GB
+    nutanix_pc_data_disk_size: 500
+    nutanix_pc_memory_size: 26
   - size: large
     nutanix_pc_num_sockets: 10
-    nutanix_pc_data_disk_size: 2500 GB
-    nutanix_pc_memory_size: 44 GB
+    nutanix_pc_data_disk_size: 2500
+    nutanix_pc_memory_size: 44
   - size: xlarge
     nutanix_pc_num_sockets: 14
-    nutanix_pc_data_disk_size: 2500 GB
-    nutanix_pc_dmemory_size: 60 GB
+    nutanix_pc_data_disk_size: 2500
+    nutanix_pc_memory_size: 60
