@@ -202,7 +202,17 @@
     var: role_nutanix_pe_deploy_pc_disk
   when: role_nutanix_pe_deploy_pc_debug
 
+- name: Debug role_nutanix_pe_deploy_pc_disk | human_to_bytes
+  ansible.builtin.debug:
+    msg: "{{ role_nutanix_pe_deploy_pc_disk | human_to_bytes }}"
+  when: role_nutanix_pe_deploy_pc_debug
+
 - name: Debug role_nutanix_pe_deploy_pc_vram
   ansible.builtin.debug:
     var: role_nutanix_pe_deploy_pc_vram
+  when: role_nutanix_pe_deploy_pc_debug
+
+- name: Debug role_nutanix_pe_deploy_pc_vram | human_to_bytes
+  ansible.builtin.debug:
+    msg: "{{ role_nutanix_pe_deploy_pc_vram | human_to_bytes }}"
   when: role_nutanix_pe_deploy_pc_debug
