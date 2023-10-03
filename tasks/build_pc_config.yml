@@ -129,7 +129,7 @@
       Please ensure that this release is enabled for 1-click deployment or has been manually uploaded to the cluster."
   when: not role_nutanix_pe_deploy_pc_version_data
 
-- name: Debug role_nutanix_pe_deploy_pc_version_list
+- name: Debug role_nutanix_pe_deploy_pc_version_data
   ansible.builtin.debug:
     msg: "{{ role_nutanix_pe_deploy_pc_version_data }}"
   when: role_nutanix_pe_deploy_pc_debug
@@ -164,18 +164,18 @@
 
 - name: Debug role_nutanix_pe_deploy_pc_vcpu
   ansible.builtin.debug:
-    msg: "vcpu: metadata={{ role_nutanix_pe_deploy_pc_metadata_vcpu }}, \
-      default={{ role_nutanix_pe_deploy_pc_default_vcpu }}, value={{ role_nutanix_pe_deploy_pc_vcpu }}"
+    msg: 'vcpu: metadata={{ role_nutanix_pe_deploy_pc_metadata_vcpu }}, \
+      default={{ role_nutanix_pe_deploy_pc_default_vcpu }}, value={{ role_nutanix_pe_deploy_pc_vcpu }}'
   when: role_nutanix_pe_deploy_pc_debug
 
 - name: Debug role_nutanix_pe_deploy_pc_disk
   ansible.builtin.debug:
-    msg: "vcpu: metadata={{ role_nutanix_pe_deploy_pc_default_disk }}, \
-      default={{ role_nutanix_pe_deploy_pc_default_disk }}, value={{ role_nutanix_pe_deploy_pc_disk }}"
+    msg: 'vcpu: metadata={{ role_nutanix_pe_deploy_pc_default_disk }}, \
+      default={{ role_nutanix_pe_deploy_pc_default_disk }}, value={{ role_nutanix_pe_deploy_pc_disk }}'
   when: role_nutanix_pe_deploy_pc_debug
 
 - name: Debug role_nutanix_pe_deploy_pc_vram
   ansible.builtin.debug:
-    msg: "vcpu: metadata={{ role_nutanix_pe_deploy_pc_metadata_vram }}, \
-      default={{ role_nutanix_pe_deploy_pc_default_vram }}, value={{ role_nutanix_pe_deploy_pc_vram }}"
+    msg: 'vcpu: metadata={{ role_nutanix_pe_deploy_pc_metadata_vram }}, \
+      default={{ role_nutanix_pe_deploy_pc_default_vram }}, value={{ role_nutanix_pe_deploy_pc_vram }}'
   when: role_nutanix_pe_deploy_pc_debug
