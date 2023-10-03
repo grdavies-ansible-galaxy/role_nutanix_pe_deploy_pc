@@ -30,14 +30,14 @@
     - role_nutanix_pe_deploy_pc_dns_list is not defined
     - role_nutanix_pe_deploy_pc_dns_list | length > 0
 
-- name: Variable 'role_nutanix_pe_deploy_pc_size' not defined
+- name: Variable 'role_nutanix_pe_deploy_pc_deploy_size' not defined
   ansible.builtin.fail:
-    msg: "the variable 'role_nutanix_pe_deploy_pc_size' is not defined."
+    msg: "the variable 'role_nutanix_pe_deploy_pc_deploy_size' is not defined."
   when:
-    - role_nutanix_pe_deploy_pc_size is not defined
+    - role_nutanix_pe_deploy_pc_deploy_size is not defined
 
-- name: Variable 'role_nutanix_pe_deploy_pc_size' incorrect value
+- name: Variable 'role_nutanix_pe_deploy_pc_deploy_size' incorrect value
   ansible.builtin.fail:
-    msg: "the variable 'role_nutanix_pe_deploy_pc_size' is not set to ['small', 'large', 'xlarge']."
+    msg: "the variable 'role_nutanix_pe_deploy_pc_deploy_size' is not set to ['small', 'large', 'xlarge']."
   when:
-    - role_nutanix_pe_deploy_pc_size not in ['small', 'large', 'xlarge']
+    - role_nutanix_pe_deploy_pc_deploy_size not in ['small', 'large', 'xlarge']
