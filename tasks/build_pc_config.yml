@@ -180,11 +180,32 @@
     var: role_nutanix_pe_deploy_pc_default_vram
   when: role_nutanix_pe_deploy_pc_debug
 
+- name: Debug role_nutanix_pe_deploy_pc_override_vcpu
+  ansible.builtin.debug:
+    var: role_nutanix_pe_deploy_pc_override_vcpu
+  when:
+    - role_nutanix_pe_deploy_pc_debug
+    - role_nutanix_pe_deploy_pc_override_vcpu is defined
+
+- name: Debug role_nutanix_pe_deploy_pc_override_disk_gb
+  ansible.builtin.debug:
+    var: role_nutanix_pe_deploy_pc_override_disk_gb
+  when:
+    - role_nutanix_pe_deploy_pc_debug
+    - role_nutanix_pe_deploy_pc_override_disk is defined
+
+- name: Debug role_nutanix_pe_deploy_pc_override_vram_gb
+  ansible.builtin.debug:
+    var: role_nutanix_pe_deploy_pc_override_vram_gb
+  when:
+    - role_nutanix_pe_deploy_pc_debug
+    - role_nutanix_pe_deploy_pc_override_vram is defined
+
 - name: Set PC deployment size
   ansible.builtin.set_fact:
-    role_nutanix_pe_deploy_pc_vcpu: "{{ role_nutanix_pe_deploy_pc_metadata_vcpu | default(role_nutanix_pe_deploy_pc_default_vcpu) | int }}"
-    role_nutanix_pe_deploy_pc_disk: "{{ role_nutanix_pe_deploy_pc_metadata_disk | default(role_nutanix_pe_deploy_pc_default_disk) | int }} GB"
-    role_nutanix_pe_deploy_pc_vram: "{{ role_nutanix_pe_deploy_pc_metadata_vram | default(role_nutanix_pe_deploy_pc_default_vram) | int }} GB"
+    role_nutanix_pe_deploy_pc_vcpu: "{{ role_nutanix_pe_deploy_pc_override_vcpu | default(role_nutanix_pe_deploy_pc_metadata_vcpu) | default(role_nutanix_pe_deploy_pc_default_vcpu) | int }}"
+    role_nutanix_pe_deploy_pc_disk: "{{ role_nutanix_pe_deploy_pc_override_disk_gb | default(role_nutanix_pe_deploy_pc_metadata_disk) | default(role_nutanix_pe_deploy_pc_default_disk) | int }} GB"
+    role_nutanix_pe_deploy_pc_vram: "{{ role_nutanix_pe_deploy_pc_override_vram_gb | default(role_nutanix_pe_deploy_pc_metadata_vram) | default(role_nutanix_pe_deploy_pc_default_vram) | int }} GB"
 
 - name: Debug role_nutanix_pe_deploy_pc_vcpu
   ansible.builtin.debug:

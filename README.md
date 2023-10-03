@@ -11,7 +11,7 @@ The following roles need to be installed as they are used within this role;
 - grdavies.role_nutanix_prism_pulse
 - grdavies.role_nutanix_pe_container_search
 
-```
+```bash
 ansible-galaxy install grdavies.role_nutanix_prism_initial_password --force
 ansible-galaxy install grdavies.role_nutanix_prism_eula --force
 ansible-galaxy install grdavies.role_nutanix_prism_pulse --force
@@ -43,6 +43,9 @@ ansible-galaxy install grdavies.role_nutanix_pe_container_search --force
 | role_nutanix_pe_deploy_pc_eula_full_name            | no       |                                         |                                                                                 |                                                                                                                                                                                                                                          |
 | role_nutanix_pe_deploy_pc_eula_company_name         | no       |                                         |                                                                                 |                                                                                                                                                                                                                                          |
 | role_nutanix_pe_deploy_pc_eula_job_title            | no       |                                         |                                                                                 |                                                                                                                                                                                                                                          |
+| role_nutanix_pe_deploy_pc_override_vcpu             | no       |                                         |                                                                                 | Override value for PC VM vCPU                                                                                                                                                                                                            |
+| role_nutanix_pe_deploy_pc_override_disk_gb          | no       |                                         |                                                                                 | Override value for PC VM disk in GB                                                                                                                                                                                                      |
+| role_nutanix_pe_deploy_pc_override_vram_gb          | no       |                                         |                                                                                 | Override value for PC VM RAM in GB                                                                                                                                                                                                       |
 
 ## Dependencies
 
@@ -54,7 +57,7 @@ ansible-galaxy install grdavies.role_nutanix_pe_container_search --force
 
 ## Example Playbook to deploy a single Prism Central instance
 
-```
+```YAML
 - hosts: localhost
   gather_facts: false
   roles:
@@ -84,7 +87,7 @@ ansible-galaxy install grdavies.role_nutanix_pe_container_search --force
 
 ## Example Playbook to deploy a scale-out Prism Central instance
 
-```
+```YAML
 - hosts: localhost
   gather_facts: false
   roles:
@@ -124,4 +127,3 @@ See LICENSE.md
 ## Author Information
 
 Ross Davies
-/Users/ross.davies/Documents/GitHub/nutanix_ansible_galaxy_roles/role_nutanix_pe_deploy_pc/README.md
