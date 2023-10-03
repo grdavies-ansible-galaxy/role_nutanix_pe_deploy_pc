@@ -136,12 +136,9 @@
 
 - name: Get PC deployment size from release metadata
   ansible.builtin.set_fact:
-    role_nutanix_pe_deploy_pc_metadata_vcpu: >-
-      "{{ role_nutanix_pe_deploy_pc_version_data.prismCentralSizes | json_query(query) | first | json_query('vcpus') }}"
-    role_nutanix_pe_deploy_pc_metadata_disk: >-
-      "{{ role_nutanix_pe_deploy_pc_version_data.prismCentralSizes | json_query(query) | first | json_query('diskSizeInGib') }}"
-    role_nutanix_pe_deploy_pc_metadata_vram: >-
-      "{{ role_nutanix_pe_deploy_pc_version_data.prismCentralSizes | json_query(query) | first | json_query('memorySizeInGib') }}"
+    role_nutanix_pe_deploy_pc_metadata_vcpu: "{{ role_nutanix_pe_deploy_pc_version_data.prismCentralSizes | json_query(query) | first | json_query('vcpus') }}"
+    role_nutanix_pe_deploy_pc_metadata_disk: "{{ role_nutanix_pe_deploy_pc_version_data.prismCentralSizes | json_query(query) | first | json_query('diskSizeInGib') }}"
+    role_nutanix_pe_deploy_pc_metadata_vram: "{{ role_nutanix_pe_deploy_pc_version_data.prismCentralSizes | json_query(query) | first | json_query('memorySizeInGib') }}"
   vars:
     query: "[?pcVmFormFactor==`{{ role_nutanix_pe_deploy_pc_deploy_size }}`]"
 
@@ -162,12 +159,9 @@
 
 - name: Get PC deployment size from defaults
   ansible.builtin.set_fact:
-    role_nutanix_pe_deploy_pc_default_vcpu: >-
-      "{{ role_nutanix_pe_deploy_pc_size_defaults | json_query(query) | first | json_query('nutanix_pc_num_sockets') }}"
-    role_nutanix_pe_deploy_pc_default_disk: >-
-      "{{ role_nutanix_pe_deploy_pc_size_defaults | json_query(query) | first | json_query('nutanix_pc_data_disk_size') }}"
-    role_nutanix_pe_deploy_pc_default_vram: >-
-      "{{ role_nutanix_pe_deploy_pc_size_defaults | json_query(query) | first | json_query('nutanix_pc_memory_size') }}"
+    role_nutanix_pe_deploy_pc_default_vcpu: "{{ role_nutanix_pe_deploy_pc_size_defaults | json_query(query) | first | json_query('nutanix_pc_num_sockets') }}"
+    role_nutanix_pe_deploy_pc_default_disk: "{{ role_nutanix_pe_deploy_pc_size_defaults | json_query(query) | first | json_query('nutanix_pc_data_disk_size') }}"
+    role_nutanix_pe_deploy_pc_default_vram: "{{ role_nutanix_pe_deploy_pc_size_defaults | json_query(query) | first | json_query('nutanix_pc_memory_size') }}"
   vars:
     query: "[?size==`{{ role_nutanix_pe_deploy_pc_deploy_size }}`]"
 
@@ -188,9 +182,9 @@
 
 - name: Set PC deployment size
   ansible.builtin.set_fact:
-    role_nutanix_pe_deploy_pc_vcpu: "{{ role_nutanix_pe_deploy_pc_metadata_vcpu | default(role_nutanix_pe_deploy_pc_default_vcpu) }}"
-    role_nutanix_pe_deploy_pc_disk: "{{ role_nutanix_pe_deploy_pc_metadata_disk | default(role_nutanix_pe_deploy_pc_default_disk) }} GB"
-    role_nutanix_pe_deploy_pc_vram: "{{ role_nutanix_pe_deploy_pc_metadata_vram | default(role_nutanix_pe_deploy_pc_default_vram) }} GB"
+    role_nutanix_pe_deploy_pc_vcpu: "{{ role_nutanix_pe_deploy_pc_metadata_vcpu | default(role_nutanix_pe_deploy_pc_default_vcpu) | int }}"
+    role_nutanix_pe_deploy_pc_disk: "{{ role_nutanix_pe_deploy_pc_metadata_disk | default(role_nutanix_pe_deploy_pc_default_disk) | int }} GB"
+    role_nutanix_pe_deploy_pc_vram: "{{ role_nutanix_pe_deploy_pc_metadata_vram | default(role_nutanix_pe_deploy_pc_default_vram) | int }} GB"
 
 - name: Debug role_nutanix_pe_deploy_pc_vcpu
   ansible.builtin.debug:
