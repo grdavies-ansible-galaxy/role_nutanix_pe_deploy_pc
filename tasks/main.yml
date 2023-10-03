@@ -55,7 +55,11 @@
   ansible.builtin.wait_for:
     timeout: 15
   delegate_to: localhost
-  when: role_nutanix_pe_deploy_pc_vm_list | length > 1
+  when:
+    - role_nutanix_pe_deploy_pc_vm_list | length > 1
+    - role_nutanix_pe_deploy_pc_password is defined
+    - not role_nutanix_pe_deploy_pc_vm_exists | default(false)
+    - not role_nutanix_pe_deploy_pc_registered | default(false)
 
 - name: Accept Prism EULA
   ansible.builtin.import_role:
